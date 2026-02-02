@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tikka Timer</string>
+
+    <!-- Navigation -->
+    <string name="nav_alarm">알람</string>
+    <string name="nav_timer">타이머</string>
+    <string name="nav_stopwatch">스톱워치</string>
+    <string name="nav_settings">설정</string>
+
+    <!-- Alarm -->
+    <string name="alarm_add">알람 추가</string>
+    <string name="alarm_edit">알람 편집</string>
+    <string name="alarm_delete">삭제</string>
+    <string name="alarm_save">저장</string>
+    <string name="alarm_cancel">취소</string>
+    <string name="alarm_empty">알람이 없습니다</string>
+    <string name="alarm_empty_hint">+ 버튼을 눌러 알람을 추가하세요</string>
+    <string name="alarm_label">알람 이름</string>
+    <string name="alarm_label_hint">라벨 (선택)</string>
+    <string name="alarm_repeat">반복</string>
+    <string name="alarm_repeat_none">반복 안함</string>
+    <string name="alarm_repeat_everyday">매일</string>
+    <string name="alarm_repeat_weekdays">평일</string>
+    <string name="alarm_repeat_weekend">주말</string>
+    <string name="alarm_onetime_hint">미선택 시 1회성 알람으로 동작 후 자동 비활성화</string>
+    <string name="alarm_sound">알람 소리</string>
+    <string name="alarm_vibration">진동</string>
+    <string name="alarm_snooze">스누즈</string>
+    <string name="alarm_upcoming">다음 알람</string>
+    <string name="alarm_active_count">활성화된 알람 %d개</string>
+    <string name="alarm_am">오전</string>
+    <string name="alarm_pm">오후</string>
+    <string name="alarm_count">알람 %d개</string>
+    <string name="timer_count">타이머 %d개</string>
+
+    <!-- Time until -->
+    <string name="time_until_days_hours">%1$d일 %2$d시간 후</string>
+    <string name="time_until_days">%d일 후</string>
+    <string name="time_until_hours_minutes">%1$d시간 %2$d분 후</string>
+    <string name="time_until_hours">%d시간 후</string>
+    <string name="time_until_minutes">%d분 후</string>
+    <string name="time_until_soon">곧</string>
+
+    <!-- Days of week -->
+    <string name="day_mon">월</string>
+    <string name="day_tue">화</string>
+    <string name="day_wed">수</string>
+    <string name="day_thu">목</string>
+    <string name="day_fri">금</string>
+    <string name="day_sat">토</string>
+    <string name="day_sun">일</string>
+
+    <!-- Timer -->
+    <string name="timer_title">타이머</string>
+    <string name="timer_new">새 타이머</string>
+    <string name="timer_add">타이머 추가</string>
+    <string name="timer_edit">타이머 수정</string>
+    <string name="timer_start">시작</string>
+    <string name="timer_pause">일시정지</string>
+    <string name="timer_resume">재개</string>
+    <string name="timer_reset">리셋</string>
+    <string name="timer_delete">삭제</string>
+    <string name="timer_add_minute">+1분</string>
+    <string name="timer_running">실행 중인 타이머</string>
+    <string name="timer_preset">프리셋</string>
+    <string name="timer_preset_edit">프리셋 수정</string>
+    <string name="timer_preset_name">프리셋 이름</string>
+    <string name="timer_preset_name_hint">프리셋 이름 (선택)</string>
+    <string name="timer_preset_save">프리셋 저장</string>
+    <string name="timer_name_hint">타이머 이름 (선택)</string>
+    <string name="timer_name_example">예: 라면 타이머</string>
+    <string name="timer_save_and_start">저장 및 시작</string>
+    <string name="timer_empty">타이머가 없습니다</string>
+    <string name="timer_hours">시간</string>
+    <string name="timer_minutes">분</string>
+    <string name="timer_seconds">초</string>
+    <string name="timer_state_running">실행 중</string>
+    <string name="timer_state_paused">일시정지</string>
+    <string name="timer_state_finished">완료</string>
+    <string name="timer_state_idle">대기</string>
+    <string name="timer_sound">소리</string>
+    <string name="timer_vibration">진동</string>
+    <string name="timer_edit_btn">수정</string>
+    <string name="timer_back">뒤로</string>
+
+    <!-- Stopwatch -->
+    <string name="stopwatch_start">시작</string>
+    <string name="stopwatch_pause">일시정지</string>
+    <string name="stopwatch_reset">전체 초기화</string>
+    <string name="stopwatch_lap">랩타임</string>
+    <string name="stopwatch_lap_number">랩 %d</string>
+
+    <!-- Settings -->
+    <string name="settings_title">설정</string>
+    <string name="settings_theme">테마</string>
+    <string name="settings_theme_select">테마 선택</string>
+    <string name="settings_color_theme">컬러 테마</string>
+    <string name="settings_color_theme_select">컬러 테마 선택</string>
+    <string name="settings_language">언어</string>
+    <string name="settings_language_select">언어 선택</string>
+    <string name="settings_reset">설정 초기화</string>
+    <string name="settings_reset_confirm">설정 초기화</string>
+    <string name="settings_reset_message">모든 설정이 기본값으로 초기화됩니다. 계속하시겠습니까?</string>
+    <string name="settings_feedback">개발자에게 제안하기</string>
+    <string name="settings_feedback_desc">앱에 대한 의견을 보내주세요</string>
+    <string name="settings_feedback_subject">Tikka Timer 앱 의견</string>
+    <string name="settings_feedback_email_not_found">이메일 앱을 찾을 수 없습니다</string>
+    <string name="settings_app_info">Tikka Timer 앱 정보</string>
+    <string name="settings_version">버전</string>
+
+    <!-- Theme modes -->
+    <string name="theme_system">시스템 설정</string>
+    <string name="theme_light">라이트 모드</string>
+    <string name="theme_dark">다크 모드</string>
+
+    <!-- Color themes -->
+    <string name="color_default">기본 (보라)</string>
+    <string name="color_ocean">오션 (파랑)</string>
+    <string name="color_forest">포레스트 (초록)</string>
+    <string name="color_sunset">선셋 (오렌지)</string>
+    <string name="color_cherry">체리 (핑크)</string>
+    <string name="color_lavender">라벤더 (연보라)</string>
+
+    <!-- Sound types -->
+    <string name="sound_default">기본 알람음</string>
+    <string name="sound_silent">무음</string>
+    <string name="sound_bell">벨소리</string>
+    <string name="sound_digital">디지털</string>
+    <string name="sound_gentle">부드러운 알람</string>
+    <string name="sound_custom">사용자 지정</string>
+
+    <!-- Vibration patterns -->
+    <string name="vibration_none">진동 없음</string>
+    <string name="vibration_default">기본</string>
+    <string name="vibration_strong">강함</string>
+    <string name="vibration_heartbeat">심장박동</string>
+    <string name="vibration_sos">SOS</string>
+    <string name="vibration_crescendo">점점 강하게</string>
+
+    <!-- Common -->
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="save">저장</string>
+    <string name="delete">삭제</string>
+    <string name="selected">선택됨</string>
+    <string name="increase">증가</string>
+    <string name="decrease">감소</string>
+
+    <!-- Alarm Ringing -->
+    <string name="alarm_dismiss">해제</string>
+    <string name="alarm_notification_title">알람</string>
+
+    <!-- Notification Channels -->
+    <string name="notification_channel_alarm">알람</string>
+    <string name="notification_channel_alarm_desc">알람이 울릴 때 표시되는 알림</string>
+    <string name="notification_channel_timer">타이머</string>
+    <string name="notification_channel_timer_desc">타이머 완료 시 표시되는 알림</string>
+    <string name="notification_channel_foreground">백그라운드 실행</string>
+    <string name="notification_channel_foreground_desc">타이머/스톱워치 백그라운드 실행 상태</string>
+
+    <!-- Timer Foreground Service -->
+    <string name="timer_foreground_title">타이머 실행 중</string>
+    <string name="stopwatch_foreground_title">스톱워치 실행 중</string>
+    <string name="timer_remaining">남은 시간: %s</string>
+    <string name="stopwatch_elapsed">경과 시간: %s</string>
+
+    <!-- Privacy Policy -->
+    <string name="settings_privacy_policy">개인정보 처리방침</string>
+    <string name="settings_privacy_policy_desc">개인정보 수집 및 이용 안내</string>
+</resources>

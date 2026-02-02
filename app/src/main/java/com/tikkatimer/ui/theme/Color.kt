@@ -1,0 +1,51 @@
+package com.tikkatimer.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+// Default (Purple)
+val Purple80 = Color(0xFFD0BCFF)
+val PurpleGrey80 = Color(0xFFCCC2DC)
+val Pink80 = Color(0xFFEFB8C8)
+val Purple40 = Color(0xFF6650a4)
+val PurpleGrey40 = Color(0xFF625b71)
+val Pink40 = Color(0xFF7D5260)
+
+// Ocean (Blue)
+val Ocean80 = Color(0xFF90CAF9)
+val OceanGrey80 = Color(0xFFB3E5FC)
+val OceanAccent80 = Color(0xFF80DEEA)
+val Ocean40 = Color(0xFF1976D2)
+val OceanGrey40 = Color(0xFF0288D1)
+val OceanAccent40 = Color(0xFF0097A7)
+
+// Forest (Green)
+val Forest80 = Color(0xFFA5D6A7)
+val ForestGrey80 = Color(0xFFC8E6C9)
+val ForestAccent80 = Color(0xFFDCEDC8)
+val Forest40 = Color(0xFF388E3C)
+val ForestGrey40 = Color(0xFF43A047)
+val ForestAccent40 = Color(0xFF689F38)
+
+// Sunset (Orange)
+val Sunset80 = Color(0xFFFFCC80)
+val SunsetGrey80 = Color(0xFFFFE0B2)
+val SunsetAccent80 = Color(0xFFFFAB91)
+val Sunset40 = Color(0xFFF57C00)
+val SunsetGrey40 = Color(0xFFFF9800)
+val SunsetAccent40 = Color(0xFFFF5722)
+
+// Cherry (Red/Pink)
+val Cherry80 = Color(0xFFF48FB1)
+val CherryGrey80 = Color(0xFFF8BBD9)
+val CherryAccent80 = Color(0xFFEF9A9A)
+val Cherry40 = Color(0xFFD81B60)
+val CherryGrey40 = Color(0xFFC2185B)
+val CherryAccent40 = Color(0xFFE53935)
+
+// Lavender (Light Purple)
+val Lavender80 = Color(0xFFCE93D8)
+val LavenderGrey80 = Color(0xFFE1BEE7)
+val LavenderAccent80 = Color(0xFFB39DDB)
+val Lavender40 = Color(0xFF8E24AA)
+val LavenderGrey40 = Color(0xFF7B1FA2)
+val LavenderAccent40 = Color(0xFF673AB7)

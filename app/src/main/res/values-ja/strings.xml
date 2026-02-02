@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tikka Timer</string>
+
+    <!-- Navigation -->
+    <string name="nav_alarm">アラーム</string>
+    <string name="nav_timer">タイマー</string>
+    <string name="nav_stopwatch">ストップウォッチ</string>
+    <string name="nav_settings">設定</string>
+
+    <!-- Alarm -->
+    <string name="alarm_add">アラームを追加</string>
+    <string name="alarm_edit">アラームを編集</string>
+    <string name="alarm_delete">削除</string>
+    <string name="alarm_save">保存</string>
+    <string name="alarm_cancel">キャンセル</string>
+    <string name="alarm_empty">アラームがありません</string>
+    <string name="alarm_empty_hint">+をタップしてアラームを追加</string>
+    <string name="alarm_label">アラーム名</string>
+    <string name="alarm_label_hint">ラベル（任意）</string>
+    <string name="alarm_repeat">繰り返し</string>
+    <string name="alarm_repeat_none">繰り返しなし</string>
+    <string name="alarm_repeat_everyday">毎日</string>
+    <string name="alarm_repeat_weekdays">平日</string>
+    <string name="alarm_repeat_weekend">週末</string>
+    <string name="alarm_onetime_hint">曜日未選択時は1回限りのアラーム</string>
+    <string name="alarm_sound">アラーム音</string>
+    <string name="alarm_vibration">バイブレーション</string>
+    <string name="alarm_snooze">スヌーズ</string>
+    <string name="alarm_upcoming">次のアラーム</string>
+    <string name="alarm_active_count">有効なアラーム %d件</string>
+    <string name="alarm_am">午前</string>
+    <string name="alarm_pm">午後</string>
+    <string name="alarm_count">アラーム %d件</string>
+    <string name="timer_count">タイマー %d件</string>
+
+    <!-- Time until -->
+    <string name="time_until_days_hours">%1$d日 %2$d時間後</string>
+    <string name="time_until_days">%d日後</string>
+    <string name="time_until_hours_minutes">%1$d時間 %2$d分後</string>
+    <string name="time_until_hours">%d時間後</string>
+    <string name="time_until_minutes">%d分後</string>
+    <string name="time_until_soon">まもなく</string>
+
+    <!-- Days of week -->
+    <string name="day_mon">月</string>
+    <string name="day_tue">火</string>
+    <string name="day_wed">水</string>
+    <string name="day_thu">木</string>
+    <string name="day_fri">金</string>
+    <string name="day_sat">土</string>
+    <string name="day_sun">日</string>
+
+    <!-- Timer -->
+    <string name="timer_title">タイマー</string>
+    <string name="timer_new">新規タイマー</string>
+    <string name="timer_add">タイマーを追加</string>
+    <string name="timer_edit">タイマーを編集</string>
+    <string name="timer_start">スタート</string>
+    <string name="timer_pause">一時停止</string>
+    <string name="timer_resume">再開</string>
+    <string name="timer_reset">リセット</string>
+    <string name="timer_delete">削除</string>
+    <string name="timer_add_minute">+1分</string>
+    <string name="timer_running">実行中のタイマー</string>
+    <string name="timer_preset">プリセット</string>
+    <string name="timer_preset_edit">プリセットを編集</string>
+    <string name="timer_preset_name">プリセット名</string>
+    <string name="timer_preset_name_hint">プリセット名（任意）</string>
+    <string name="timer_preset_save">プリセットを保存</string>
+    <string name="timer_name_hint">タイマー名（任意）</string>
+    <string name="timer_name_example">例: ラーメンタイマー</string>
+    <string name="timer_save_and_start">保存して開始</string>
+    <string name="timer_empty">タイマーがありません</string>
+    <string name="timer_hours">時間</string>
+    <string name="timer_minutes">分</string>
+    <string name="timer_seconds">秒</string>
+    <string name="timer_state_running">実行中</string>
+    <string name="timer_state_paused">一時停止</string>
+    <string name="timer_state_finished">完了</string>
+    <string name="timer_state_idle">待機</string>
+    <string name="timer_sound">サウンド</string>
+    <string name="timer_vibration">バイブレーション</string>
+    <string name="timer_edit_btn">編集</string>
+    <string name="timer_back">戻る</string>
+
+    <!-- Stopwatch -->
+    <string name="stopwatch_start">スタート</string>
+    <string name="stopwatch_pause">一時停止</string>
+    <string name="stopwatch_reset">リセット</string>
+    <string name="stopwatch_lap">ラップ</string>
+    <string name="stopwatch_lap_number">ラップ %d</string>
+
+    <!-- Settings -->
+    <string name="settings_title">設定</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme_select">テーマを選択</string>
+    <string name="settings_color_theme">カラーテーマ</string>
+    <string name="settings_color_theme_select">カラーテーマを選択</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_language_select">言語を選択</string>
+    <string name="settings_reset">設定をリセット</string>
+    <string name="settings_reset_confirm">設定をリセット</string>
+    <string name="settings_reset_message">すべての設定がデフォルトにリセットされます。続行しますか？</string>
+    <string name="settings_feedback">開発者に提案する</string>
+    <string name="settings_feedback_desc">アプリについてのご意見をお聞かせください</string>
+    <string name="settings_feedback_subject">Tikka Timer アプリのフィードバック</string>
+    <string name="settings_feedback_email_not_found">メールアプリが見つかりません</string>
+    <string name="settings_app_info">Tikka Timer アプリ情報</string>
+    <string name="settings_version">バージョン</string>
+
+    <!-- Theme modes -->
+    <string name="theme_system">システム設定</string>
+    <string name="theme_light">ライトモード</string>
+    <string name="theme_dark">ダークモード</string>
+
+    <!-- Color themes -->
+    <string name="color_default">デフォルト（紫）</string>
+    <string name="color_ocean">オーシャン（青）</string>
+    <string name="color_forest">フォレスト（緑）</string>
+    <string name="color_sunset">サンセット（オレンジ）</string>
+    <string name="color_cherry">チェリー（ピンク）</string>
+    <string name="color_lavender">ラベンダー（薄紫）</string>
+
+    <!-- Sound types -->
+    <string name="sound_default">デフォルトアラーム</string>
+    <string name="sound_silent">サイレント</string>
+    <string name="sound_bell">ベル</string>
+    <string name="sound_digital">デジタル</string>
+    <string name="sound_gentle">やさしいアラーム</string>
+    <string name="sound_custom">カスタム</string>
+
+    <!-- Vibration patterns -->
+    <string name="vibration_none">バイブなし</string>
+    <string name="vibration_default">デフォルト</string>
+    <string name="vibration_strong">強い</string>
+    <string name="vibration_heartbeat">心拍</string>
+    <string name="vibration_sos">SOS</string>
+    <string name="vibration_crescendo">だんだん強く</string>
+
+    <!-- Common -->
+    <string name="confirm">OK</string>
+    <string name="cancel">キャンセル</string>
+    <string name="save">保存</string>
+    <string name="delete">削除</string>
+    <string name="selected">選択中</string>
+    <string name="increase">増加</string>
+    <string name="decrease">減少</string>
+
+    <!-- Alarm Ringing -->
+    <string name="alarm_dismiss">解除</string>
+    <string name="alarm_notification_title">アラーム</string>
+
+    <!-- Notification Channels -->
+    <string name="notification_channel_alarm">アラーム</string>
+    <string name="notification_channel_alarm_desc">アラーム時の通知</string>
+    <string name="notification_channel_timer">タイマー</string>
+    <string name="notification_channel_timer_desc">タイマー完了時の通知</string>
+    <string name="notification_channel_foreground">バックグラウンド実行</string>
+    <string name="notification_channel_foreground_desc">タイマー/ストップウォッチのバックグラウンド状態</string>
+
+    <!-- Timer Foreground Service -->
+    <string name="timer_foreground_title">タイマー実行中</string>
+    <string name="stopwatch_foreground_title">ストップウォッチ実行中</string>
+    <string name="timer_remaining">残り時間: %s</string>
+    <string name="stopwatch_elapsed">経過時間: %s</string>
+
+    <!-- Privacy Policy -->
+    <string name="settings_privacy_policy">プライバシーポリシー</string>
+    <string name="settings_privacy_policy_desc">個人情報の取り扱いについて</string>
+</resources>

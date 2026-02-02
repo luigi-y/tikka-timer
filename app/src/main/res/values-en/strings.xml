@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tikka Timer</string>
+
+    <!-- Navigation -->
+    <string name="nav_alarm">Alarm</string>
+    <string name="nav_timer">Timer</string>
+    <string name="nav_stopwatch">Stopwatch</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Alarm -->
+    <string name="alarm_add">Add Alarm</string>
+    <string name="alarm_edit">Edit Alarm</string>
+    <string name="alarm_delete">Delete</string>
+    <string name="alarm_save">Save</string>
+    <string name="alarm_cancel">Cancel</string>
+    <string name="alarm_empty">No alarms</string>
+    <string name="alarm_empty_hint">Tap + to add an alarm</string>
+    <string name="alarm_label">Alarm name</string>
+    <string name="alarm_label_hint">Label (optional)</string>
+    <string name="alarm_repeat">Repeat</string>
+    <string name="alarm_repeat_none">No repeat</string>
+    <string name="alarm_repeat_everyday">Every day</string>
+    <string name="alarm_repeat_weekdays">Weekdays</string>
+    <string name="alarm_repeat_weekend">Weekend</string>
+    <string name="alarm_onetime_hint">One-time alarm when no days selected</string>
+    <string name="alarm_sound">Alarm Sound</string>
+    <string name="alarm_vibration">Vibration</string>
+    <string name="alarm_snooze">Snooze</string>
+    <string name="alarm_upcoming">Next alarm</string>
+    <string name="alarm_active_count">%d active alarms</string>
+    <string name="alarm_am">AM</string>
+    <string name="alarm_pm">PM</string>
+    <string name="alarm_count">%d alarms</string>
+    <string name="timer_count">%d timers</string>
+
+    <!-- Time until -->
+    <string name="time_until_days_hours">In %1$d days %2$d hours</string>
+    <string name="time_until_days">In %d days</string>
+    <string name="time_until_hours_minutes">In %1$d hours %2$d minutes</string>
+    <string name="time_until_hours">In %d hours</string>
+    <string name="time_until_minutes">In %d minutes</string>
+    <string name="time_until_soon">Soon</string>
+
+    <!-- Days of week -->
+    <string name="day_mon">Mon</string>
+    <string name="day_tue">Tue</string>
+    <string name="day_wed">Wed</string>
+    <string name="day_thu">Thu</string>
+    <string name="day_fri">Fri</string>
+    <string name="day_sat">Sat</string>
+    <string name="day_sun">Sun</string>
+
+    <!-- Timer -->
+    <string name="timer_title">Timer</string>
+    <string name="timer_new">New Timer</string>
+    <string name="timer_add">Add Timer</string>
+    <string name="timer_edit">Edit Timer</string>
+    <string name="timer_start">Start</string>
+    <string name="timer_pause">Pause</string>
+    <string name="timer_resume">Resume</string>
+    <string name="timer_reset">Reset</string>
+    <string name="timer_delete">Delete</string>
+    <string name="timer_add_minute">+1 min</string>
+    <string name="timer_running">Running Timers</string>
+    <string name="timer_preset">Presets</string>
+    <string name="timer_preset_edit">Edit Preset</string>
+    <string name="timer_preset_name">Preset name</string>
+    <string name="timer_preset_name_hint">Preset name (optional)</string>
+    <string name="timer_preset_save">Save Preset</string>
+    <string name="timer_name_hint">Timer name (optional)</string>
+    <string name="timer_name_example">e.g. Ramen timer</string>
+    <string name="timer_save_and_start">Save &amp; Start</string>
+    <string name="timer_empty">No timers</string>
+    <string name="timer_hours">Hours</string>
+    <string name="timer_minutes">Minutes</string>
+    <string name="timer_seconds">Seconds</string>
+    <string name="timer_state_running">Running</string>
+    <string name="timer_state_paused">Paused</string>
+    <string name="timer_state_finished">Finished</string>
+    <string name="timer_state_idle">Idle</string>
+    <string name="timer_sound">Sound</string>
+    <string name="timer_vibration">Vibration</string>
+    <string name="timer_edit_btn">Edit</string>
+    <string name="timer_back">Back</string>
+
+    <!-- Stopwatch -->
+    <string name="stopwatch_start">Start</string>
+    <string name="stopwatch_pause">Pause</string>
+    <string name="stopwatch_reset">Reset All</string>
+    <string name="stopwatch_lap">Lap</string>
+    <string name="stopwatch_lap_number">Lap %d</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_select">Select Theme</string>
+    <string name="settings_color_theme">Color Theme</string>
+    <string name="settings_color_theme_select">Select Color Theme</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_select">Select Language</string>
+    <string name="settings_reset">Reset Settings</string>
+    <string name="settings_reset_confirm">Reset Settings</string>
+    <string name="settings_reset_message">All settings will be reset to default. Continue?</string>
+    <string name="settings_feedback">Send Feedback</string>
+    <string name="settings_feedback_desc">Share your thoughts about the app</string>
+    <string name="settings_feedback_subject">Tikka Timer App Feedback</string>
+    <string name="settings_feedback_email_not_found">Email app not found</string>
+    <string name="settings_app_info">Tikka Timer App Info</string>
+    <string name="settings_version">Version</string>
+
+    <!-- Theme modes -->
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light mode</string>
+    <string name="theme_dark">Dark mode</string>
+
+    <!-- Color themes -->
+    <string name="color_default">Default (Purple)</string>
+    <string name="color_ocean">Ocean (Blue)</string>
+    <string name="color_forest">Forest (Green)</string>
+    <string name="color_sunset">Sunset (Orange)</string>
+    <string name="color_cherry">Cherry (Pink)</string>
+    <string name="color_lavender">Lavender (Light Purple)</string>
+
+    <!-- Sound types -->
+    <string name="sound_default">Default Alarm</string>
+    <string name="sound_silent">Silent</string>
+    <string name="sound_bell">Bell</string>
+    <string name="sound_digital">Digital</string>
+    <string name="sound_gentle">Gentle Alarm</string>
+    <string name="sound_custom">Custom</string>
+
+    <!-- Vibration patterns -->
+    <string name="vibration_none">No Vibration</string>
+    <string name="vibration_default">Default</string>
+    <string name="vibration_strong">Strong</string>
+    <string name="vibration_heartbeat">Heartbeat</string>
+    <string name="vibration_sos">SOS</string>
+    <string name="vibration_crescendo">Crescendo</string>
+
+    <!-- Common -->
+    <string name="confirm">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="selected">Selected</string>
+    <string name="increase">Increase</string>
+    <string name="decrease">Decrease</string>
+
+    <!-- Alarm Ringing -->
+    <string name="alarm_dismiss">Dismiss</string>
+    <string name="alarm_notification_title">Alarm</string>
+
+    <!-- Notification Channels -->
+    <string name="notification_channel_alarm">Alarm</string>
+    <string name="notification_channel_alarm_desc">Notifications when alarms ring</string>
+    <string name="notification_channel_timer">Timer</string>
+    <string name="notification_channel_timer_desc">Notifications when timers finish</string>
+    <string name="notification_channel_foreground">Background Service</string>
+    <string name="notification_channel_foreground_desc">Timer/Stopwatch background status</string>
+
+    <!-- Timer Foreground Service -->
+    <string name="timer_foreground_title">Timer Running</string>
+    <string name="stopwatch_foreground_title">Stopwatch Running</string>
+    <string name="timer_remaining">Remaining: %s</string>
+    <string name="stopwatch_elapsed">Elapsed: %s</string>
+
+    <!-- Privacy Policy -->
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_privacy_policy_desc">How we handle your data</string>
+</resources>
