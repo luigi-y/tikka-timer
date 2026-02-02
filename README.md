@@ -71,7 +71,7 @@ app/src/main/java/com/tikkatimer/
 
 ### Requirements
 - Android Studio Hedgehog or later
-- JDK 17
+- JDK 21
 - Android SDK 35
 
 ### Build
