@@ -72,7 +72,7 @@ app/src/main/java/com/tikkatimer/
 ### 요구사항
 - Android Studio Hedgehog 이상
 - JDK 21
-- Android SDK 35
+- Android SDK 36
 
 ### 빌드
 ```bash
