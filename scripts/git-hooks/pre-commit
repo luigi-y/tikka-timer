@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Pre-commit hook: ktlint 검사
+# 커밋 전 코드 스타일 검사 실행
+
+echo "🔍 Running ktlint check..."
+
+# 프로젝트 루트로 이동
+cd "$(git rev-parse --show-toplevel)"
+
+# ktlint 검사 실행
+./gradlew ktlintCheck --daemon
+
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo ""
+    echo "❌ ktlint check failed!"
+    echo ""
+    echo "자동 수정을 원하면 다음 명령어를 실행하세요:"
+    echo "  ./gradlew ktlintFormat"
+    echo ""
+    echo "수정 후 다시 커밋하세요."
+    exit 1
+fi
+
+echo "✅ ktlint check passed!"
+exit 0
