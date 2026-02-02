@@ -56,10 +56,11 @@ class AlarmSchedulerImpl
 
             // 다음 알람 시간 계산
             val nextAlarmDateTime = alarm.getNextAlarmDateTime()
-            val triggerTimeMillis = nextAlarmDateTime
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
+            val triggerTimeMillis =
+                nextAlarmDateTime
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
 
             Log.d(TAG, "Scheduling alarm ${alarm.id} at $nextAlarmDateTime (${triggerTimeMillis}ms)")
 
@@ -69,7 +70,11 @@ class AlarmSchedulerImpl
         /**
          * 재시도 로직이 포함된 알람 스케줄링
          */
-        private fun scheduleWithRetry(alarm: Alarm, triggerTimeMillis: Long, retryCount: Int) {
+        private fun scheduleWithRetry(
+            alarm: Alarm,
+            triggerTimeMillis: Long,
+            retryCount: Int,
+        ) {
             try {
                 // PendingIntent 생성
                 val pendingIntent = createAlarmPendingIntent(alarm)
@@ -105,16 +110,18 @@ class AlarmSchedulerImpl
         override fun cancel(alarmId: Long) {
             Log.d(TAG, "Cancelling alarm $alarmId")
 
-            val intent = Intent(context, AlarmReceiver::class.java).apply {
-                action = "com.tikkatimer.ALARM_$alarmId"
-            }
+            val intent =
+                Intent(context, AlarmReceiver::class.java).apply {
+                    action = "com.tikkatimer.ALARM_$alarmId"
+                }
 
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                alarmId.toInt(),
-                intent,
-                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val pendingIntent =
+                PendingIntent.getBroadcast(
+                    context,
+                    alarmId.toInt(),
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
+                )
 
             pendingIntent?.let {
                 alarmManager?.cancel(it)
@@ -144,13 +151,14 @@ class AlarmSchedulerImpl
          * 알람 트리거용 PendingIntent 생성
          */
         private fun createAlarmPendingIntent(alarm: Alarm): PendingIntent {
-            val intent = Intent(context, AlarmReceiver::class.java).apply {
-                action = "com.tikkatimer.ALARM_${alarm.id}"
-                putExtra(AlarmReceiver.EXTRA_ALARM_ID, alarm.id)
-                putExtra(AlarmReceiver.EXTRA_SOUND_TYPE, alarm.soundType.name)
-                putExtra(AlarmReceiver.EXTRA_VIBRATION_PATTERN, alarm.vibrationPattern.name)
-                alarm.ringtoneUri?.let { putExtra(AlarmReceiver.EXTRA_RINGTONE_URI, it) }
-            }
+            val intent =
+                Intent(context, AlarmReceiver::class.java).apply {
+                    action = "com.tikkatimer.ALARM_${alarm.id}"
+                    putExtra(AlarmReceiver.EXTRA_ALARM_ID, alarm.id)
+                    putExtra(AlarmReceiver.EXTRA_SOUND_TYPE, alarm.soundType.name)
+                    putExtra(AlarmReceiver.EXTRA_VIBRATION_PATTERN, alarm.vibrationPattern.name)
+                    alarm.ringtoneUri?.let { putExtra(AlarmReceiver.EXTRA_RINGTONE_URI, it) }
+                }
 
             return PendingIntent.getBroadcast(
                 context,
@@ -165,8 +173,9 @@ class AlarmSchedulerImpl
          */
         private fun createShowPendingIntent(alarmId: Long): PendingIntent {
             val packageManager = context.packageManager
-            val launchIntent = packageManager.getLaunchIntentForPackage(context.packageName)
-                ?: Intent()
+            val launchIntent =
+                packageManager.getLaunchIntentForPackage(context.packageName)
+                    ?: Intent()
 
             return PendingIntent.getActivity(
                 context,

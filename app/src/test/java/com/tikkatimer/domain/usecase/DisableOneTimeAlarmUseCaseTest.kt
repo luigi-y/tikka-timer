@@ -43,10 +43,11 @@ class DisableOneTimeAlarmUseCaseTest {
     @Test
     fun `반복 알람은 비활성화되지 않는다`() =
         runTest {
-            val repeatingAlarm = createTestAlarm(
-                id = 2,
-                repeatDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
-            )
+            val repeatingAlarm =
+                createTestAlarm(
+                    id = 2,
+                    repeatDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+                )
             coEvery { repository.getAlarmById(2L) } returns repeatingAlarm
 
             val result = useCase(2L)
@@ -69,10 +70,11 @@ class DisableOneTimeAlarmUseCaseTest {
     @Test
     fun `매일 반복 알람은 비활성화되지 않는다`() =
         runTest {
-            val everydayAlarm = createTestAlarm(
-                id = 3,
-                repeatDays = DayOfWeek.entries.toSet(),
-            )
+            val everydayAlarm =
+                createTestAlarm(
+                    id = 3,
+                    repeatDays = DayOfWeek.entries.toSet(),
+                )
             coEvery { repository.getAlarmById(3L) } returns everydayAlarm
 
             val result = useCase(3L)
@@ -83,16 +85,18 @@ class DisableOneTimeAlarmUseCaseTest {
     @Test
     fun `평일 반복 알람은 비활성화되지 않는다`() =
         runTest {
-            val weekdayAlarm = createTestAlarm(
-                id = 4,
-                repeatDays = setOf(
-                    DayOfWeek.MONDAY,
-                    DayOfWeek.TUESDAY,
-                    DayOfWeek.WEDNESDAY,
-                    DayOfWeek.THURSDAY,
-                    DayOfWeek.FRIDAY,
-                ),
-            )
+            val weekdayAlarm =
+                createTestAlarm(
+                    id = 4,
+                    repeatDays =
+                        setOf(
+                            DayOfWeek.MONDAY,
+                            DayOfWeek.TUESDAY,
+                            DayOfWeek.WEDNESDAY,
+                            DayOfWeek.THURSDAY,
+                            DayOfWeek.FRIDAY,
+                        ),
+                )
             coEvery { repository.getAlarmById(4L) } returns weekdayAlarm
 
             val result = useCase(4L)

@@ -73,10 +73,11 @@ class AlarmSchedulerTest {
 
     @Test
     fun `반복 알람 스케줄링`() {
-        val alarm = createTestAlarm(
-            isEnabled = true,
-            repeatDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
-        )
+        val alarm =
+            createTestAlarm(
+                isEnabled = true,
+                repeatDays = setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
+            )
 
         scheduler.schedule(alarm)
 

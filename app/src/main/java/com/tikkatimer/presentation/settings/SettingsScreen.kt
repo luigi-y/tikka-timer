@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.material.icons.filled.Policy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,6 +27,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -149,7 +149,7 @@ private fun SettingsScreenContent(
         SettingsItem(
             icon = Icons.Default.Language,
             title = stringResource(R.string.settings_language),
-            subtitle = settings.language.displayName,
+            subtitle = settings.language.getDisplayText(),
             onClick = { showLanguageDialog = true },
         )
 
@@ -370,6 +370,18 @@ private fun ThemeModeSelectionDialog(
     )
 }
 
+/**
+ * AppLanguage의 표시 이름을 반환
+ * SYSTEM은 현재 로케일에 맞는 문자열 리소스 사용, 나머지는 고정된 언어 이름 사용
+ */
+@Composable
+private fun AppLanguage.getDisplayText(): String =
+    if (this == AppLanguage.SYSTEM) {
+        stringResource(R.string.language_system)
+    } else {
+        this.displayName
+    }
+
 @Composable
 private fun LanguageSelectionDialog(
     selectedLanguage: AppLanguage,
@@ -391,7 +403,7 @@ private fun LanguageSelectionDialog(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = language.displayName,
+                            text = language.getDisplayText(),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f),
                         )

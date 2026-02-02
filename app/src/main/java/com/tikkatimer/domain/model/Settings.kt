@@ -23,13 +23,14 @@ enum class ColorTheme(val displayNameResId: Int) {
 
 /**
  * 앱 언어 설정
+ * displayNameResId가 0이면 displayName을 사용 (언어 이름은 해당 언어로 고정)
  */
-enum class AppLanguage(val displayName: String, val locale: String) {
-    SYSTEM("시스템 설정", ""),
-    KOREAN("한국어", "ko"),
-    ENGLISH("English", "en"),
-    JAPANESE("日本語", "ja"),
-    CHINESE("中文(简体)", "zh"),
+enum class AppLanguage(val displayNameResId: Int, val displayName: String, val locale: String) {
+    SYSTEM(1, "", ""), // displayNameResId = 1은 R.string.language_system을 의미 (실제 값은 SettingsScreen에서 처리)
+    KOREAN(0, "한국어", "ko"),
+    ENGLISH(0, "English", "en"),
+    JAPANESE(0, "日本語", "ja"),
+    CHINESE(0, "中文(简体)", "zh"),
 }
 
 /**

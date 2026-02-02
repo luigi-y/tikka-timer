@@ -28,7 +28,7 @@ import javax.inject.Inject
 class StopwatchViewModel
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(StopwatchUiState())
         val uiState: StateFlow<StopwatchUiState> = _uiState.asStateFlow()
@@ -163,10 +163,11 @@ class StopwatchViewModel
          * Foreground Service 시작
          */
         private fun startForegroundService() {
-            val intent = Intent(context, TimerForegroundService::class.java).apply {
-                action = TimerForegroundService.ACTION_START_STOPWATCH
-                putExtra(TimerForegroundService.EXTRA_STOPWATCH_ELAPSED, accumulatedMillis)
-            }
+            val intent =
+                Intent(context, TimerForegroundService::class.java).apply {
+                    action = TimerForegroundService.ACTION_START_STOPWATCH
+                    putExtra(TimerForegroundService.EXTRA_STOPWATCH_ELAPSED, accumulatedMillis)
+                }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
@@ -179,9 +180,10 @@ class StopwatchViewModel
          * Foreground Service 중지
          */
         private fun stopForegroundService() {
-            val intent = Intent(context, TimerForegroundService::class.java).apply {
-                action = TimerForegroundService.ACTION_STOP_STOPWATCH
-            }
+            val intent =
+                Intent(context, TimerForegroundService::class.java).apply {
+                    action = TimerForegroundService.ACTION_STOP_STOPWATCH
+                }
             context.startService(intent)
         }
     }

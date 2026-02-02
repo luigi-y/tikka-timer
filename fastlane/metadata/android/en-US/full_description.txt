@@ -1,0 +1,34 @@
+Tikka Timer is a simple yet powerful time management app that combines alarm clock, timer, and stopwatch in one beautiful package.
+
+<b>⏰ Alarm</b>
+• Create multiple alarms with custom labels
+• Set repeat schedules by day of week
+• Snooze functionality with customizable duration
+• Choose from various alarm sounds
+• Vibration support
+
+<b>⏱️ Timer</b>
+• Set timers with hours, minutes, and seconds
+• Save frequently used timers as presets
+• Quick +1 minute button
+• Beautiful circular progress indicator
+• Background operation support
+
+<b>⏲️ Stopwatch</b>
+• Precision timing with milliseconds
+• Record unlimited lap times
+• Automatically highlight best and worst laps
+• Clean and intuitive interface
+
+<b>🎨 Customization</b>
+• 6 beautiful color themes
+• Light and Dark mode support
+• System theme following option
+• Multi-language support (English, Korean, Japanese, Chinese)
+
+<b>🔒 Privacy</b>
+• No internet permission required
+• All data stored locally on your device
+• No ads, no tracking
+
+Download Tikka Timer now and take control of your time!

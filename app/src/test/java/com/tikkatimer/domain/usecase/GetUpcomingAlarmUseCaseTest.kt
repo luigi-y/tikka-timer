@@ -45,11 +45,12 @@ class GetUpcomingAlarmUseCaseTest {
     @Test
     fun `활성화된 알람이 있으면 가장 가까운 알람 시간과 개수를 반환한다`() =
         runTest {
-            val alarms = listOf(
-                createTestAlarm(1, LocalTime.of(8, 0)),
-                createTestAlarm(2, LocalTime.of(7, 0)),
-                createTestAlarm(3, LocalTime.of(9, 0)),
-            )
+            val alarms =
+                listOf(
+                    createTestAlarm(1, LocalTime.of(8, 0)),
+                    createTestAlarm(2, LocalTime.of(7, 0)),
+                    createTestAlarm(3, LocalTime.of(9, 0)),
+                )
             every { repository.getEnabledAlarms() } returns flowOf(alarms)
 
             val result = useCase().first()
@@ -73,10 +74,13 @@ class GetUpcomingAlarmUseCaseTest {
     @Test
     fun `반복 알람과 1회성 알람이 섞여있어도 정상 동작한다`() =
         runTest {
-            val alarms = listOf(
-                createTestAlarm(1, LocalTime.of(8, 0)), // 1회성
-                createTestAlarm(2, LocalTime.of(7, 0), setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY)), // 반복
-            )
+            val alarms =
+                listOf(
+                    // 1회성 알람
+                    createTestAlarm(1, LocalTime.of(8, 0)),
+                    // 반복 알람
+                    createTestAlarm(2, LocalTime.of(7, 0), setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY)),
+                )
             every { repository.getEnabledAlarms() } returns flowOf(alarms)
 
             val result = useCase().first()

@@ -4,8 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.tikkatimer.data.scheduler.AlarmSchedulerImpl
-import com.tikkatimer.domain.model.Alarm
 import com.tikkatimer.domain.model.SoundType
 import com.tikkatimer.domain.model.VibrationPattern
 import com.tikkatimer.domain.repository.AlarmRepository
@@ -27,8 +25,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AlarmRingingService : Service() {
     @Inject lateinit var alarmSoundManager: AlarmSoundManager
+
     @Inject lateinit var notificationHelper: NotificationHelper
+
     @Inject lateinit var alarmRepository: AlarmRepository
+
     @Inject lateinit var alarmScheduler: AlarmScheduler
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -86,8 +87,9 @@ class AlarmRingingService : Service() {
         currentAlarmId = alarmId
 
         val soundTypeName = intent.getStringExtra(EXTRA_SOUND_TYPE) ?: SoundType.DEFAULT.name
-        val vibrationPatternName = intent.getStringExtra(EXTRA_VIBRATION_PATTERN)
-            ?: VibrationPattern.DEFAULT.name
+        val vibrationPatternName =
+            intent.getStringExtra(EXTRA_VIBRATION_PATTERN)
+                ?: VibrationPattern.DEFAULT.name
         val ringtoneUri = intent.getStringExtra(EXTRA_RINGTONE_URI)
         val label = intent.getStringExtra(EXTRA_LABEL) ?: ""
         val timeText = intent.getStringExtra(EXTRA_TIME_TEXT) ?: ""
@@ -158,10 +160,12 @@ class AlarmRingingService : Service() {
         }
 
         // Activity 종료 브로드캐스트
-        sendBroadcast(Intent("com.tikkatimer.ALARM_DISMISSED").apply {
-            putExtra(EXTRA_ALARM_ID, alarmId)
-            setPackage(packageName)
-        })
+        sendBroadcast(
+            Intent("com.tikkatimer.ALARM_DISMISSED").apply {
+                putExtra(EXTRA_ALARM_ID, alarmId)
+                setPackage(packageName)
+            },
+        )
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -186,19 +190,22 @@ class AlarmRingingService : Service() {
             val alarm = alarmRepository.getAlarmById(alarmId)
             alarm?.let {
                 // 스누즈 시간 후 다시 울리도록 스케줄링
-                val snoozeAlarm = it.copy(
-                    time = it.time.plusMinutes(snoozeDuration.toLong()),
-                )
+                val snoozeAlarm =
+                    it.copy(
+                        time = it.time.plusMinutes(snoozeDuration.toLong()),
+                    )
                 alarmScheduler.schedule(snoozeAlarm)
                 Log.d(TAG, "Snooze alarm scheduled for $snoozeDuration minutes later")
             }
         }
 
         // Activity 종료 브로드캐스트
-        sendBroadcast(Intent("com.tikkatimer.ALARM_SNOOZED").apply {
-            putExtra(EXTRA_ALARM_ID, alarmId)
-            setPackage(packageName)
-        })
+        sendBroadcast(
+            Intent("com.tikkatimer.ALARM_SNOOZED").apply {
+                putExtra(EXTRA_ALARM_ID, alarmId)
+                setPackage(packageName)
+            },
+        )
 
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()

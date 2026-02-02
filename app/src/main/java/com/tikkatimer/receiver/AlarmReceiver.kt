@@ -47,8 +47,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
         // 소리/진동 정보 추출
         val soundTypeName = intent.getStringExtra(EXTRA_SOUND_TYPE) ?: SoundType.DEFAULT.name
-        val vibrationPatternName = intent.getStringExtra(EXTRA_VIBRATION_PATTERN)
-            ?: VibrationPattern.DEFAULT.name
+        val vibrationPatternName =
+            intent.getStringExtra(EXTRA_VIBRATION_PATTERN)
+                ?: VibrationPattern.DEFAULT.name
         val ringtoneUri = intent.getStringExtra(EXTRA_RINGTONE_URI)
 
         Log.d(TAG, "Sound type: $soundTypeName, Vibration: $vibrationPatternName")
@@ -67,17 +68,18 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
 
                 // AlarmRingingService 시작
-                val serviceIntent = Intent(context, AlarmRingingService::class.java).apply {
-                    action = AlarmRingingService.ACTION_START
-                    putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
-                    putExtra(AlarmRingingService.EXTRA_SOUND_TYPE, soundTypeName)
-                    putExtra(AlarmRingingService.EXTRA_VIBRATION_PATTERN, vibrationPatternName)
-                    putExtra(AlarmRingingService.EXTRA_RINGTONE_URI, ringtoneUri)
-                    putExtra(AlarmRingingService.EXTRA_LABEL, alarm.label)
-                    putExtra(AlarmRingingService.EXTRA_TIME_TEXT, alarm.getTimeText())
-                    putExtra(AlarmRingingService.EXTRA_IS_ONE_TIME, alarm.isOneTime)
-                    putExtra(AlarmRingingService.EXTRA_SNOOZE_DURATION, alarm.snoozeDurationMinutes)
-                }
+                val serviceIntent =
+                    Intent(context, AlarmRingingService::class.java).apply {
+                        action = AlarmRingingService.ACTION_START
+                        putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
+                        putExtra(AlarmRingingService.EXTRA_SOUND_TYPE, soundTypeName)
+                        putExtra(AlarmRingingService.EXTRA_VIBRATION_PATTERN, vibrationPatternName)
+                        putExtra(AlarmRingingService.EXTRA_RINGTONE_URI, ringtoneUri)
+                        putExtra(AlarmRingingService.EXTRA_LABEL, alarm.label)
+                        putExtra(AlarmRingingService.EXTRA_TIME_TEXT, alarm.getTimeText())
+                        putExtra(AlarmRingingService.EXTRA_IS_ONE_TIME, alarm.isOneTime)
+                        putExtra(AlarmRingingService.EXTRA_SNOOZE_DURATION, alarm.snoozeDurationMinutes)
+                    }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(serviceIntent)
@@ -86,15 +88,16 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
 
                 // 알람 울림 Activity 시작
-                val activityIntent = Intent(context, AlarmRingingActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                        Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    putExtra(AlarmRingingActivity.EXTRA_ALARM_ID, alarmId)
-                    putExtra(AlarmRingingActivity.EXTRA_LABEL, alarm.label)
-                    putExtra(AlarmRingingActivity.EXTRA_TIME_TEXT, alarm.getTimeText())
-                    putExtra(AlarmRingingActivity.EXTRA_SNOOZE_DURATION, alarm.snoozeDurationMinutes)
-                }
+                val activityIntent =
+                    Intent(context, AlarmRingingActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        putExtra(AlarmRingingActivity.EXTRA_ALARM_ID, alarmId)
+                        putExtra(AlarmRingingActivity.EXTRA_LABEL, alarm.label)
+                        putExtra(AlarmRingingActivity.EXTRA_TIME_TEXT, alarm.getTimeText())
+                        putExtra(AlarmRingingActivity.EXTRA_SNOOZE_DURATION, alarm.snoozeDurationMinutes)
+                    }
                 context.startActivity(activityIntent)
 
                 Log.d(TAG, "Alarm service and activity started for alarm $alarmId")

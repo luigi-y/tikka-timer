@@ -101,12 +101,13 @@ class TimerForegroundService : Service() {
 
         Log.d(TAG, "Starting timer $timerId: $timerName, remaining: $remainingMillis")
 
-        val newState = TimerServiceState(
-            id = timerId,
-            name = timerName,
-            remainingMillis = remainingMillis,
-            targetEndTimeMillis = targetEndTime,
-        )
+        val newState =
+            TimerServiceState(
+                id = timerId,
+                name = timerName,
+                remainingMillis = remainingMillis,
+                targetEndTimeMillis = targetEndTime,
+            )
 
         _timerStates.value = _timerStates.value
             .filter { it.id != timerId } + newState
@@ -139,16 +140,17 @@ class TimerForegroundService : Service() {
         val remainingMillis = intent.getLongExtra(EXTRA_REMAINING_MILLIS, 0L)
         val targetEndTime = intent.getLongExtra(EXTRA_TARGET_END_TIME, 0L)
 
-        _timerStates.value = _timerStates.value.map { state ->
-            if (state.id == timerId) {
-                state.copy(
-                    remainingMillis = remainingMillis,
-                    targetEndTimeMillis = targetEndTime,
-                )
-            } else {
-                state
+        _timerStates.value =
+            _timerStates.value.map { state ->
+                if (state.id == timerId) {
+                    state.copy(
+                        remainingMillis = remainingMillis,
+                        targetEndTimeMillis = targetEndTime,
+                    )
+                } else {
+                    state
+                }
             }
-        }
 
         updateNotification()
     }
@@ -160,10 +162,11 @@ class TimerForegroundService : Service() {
         val elapsedMillis = intent.getLongExtra(EXTRA_STOPWATCH_ELAPSED, 0L)
         Log.d(TAG, "Starting stopwatch with elapsed: $elapsedMillis")
 
-        _stopwatchState.value = StopwatchServiceState(
-            elapsedMillis = elapsedMillis,
-            startTimeMillis = System.currentTimeMillis() - elapsedMillis,
-        )
+        _stopwatchState.value =
+            StopwatchServiceState(
+                elapsedMillis = elapsedMillis,
+                startTimeMillis = System.currentTimeMillis() - elapsedMillis,
+            )
 
         isStopwatchRunning = true
         startForegroundIfNeeded()
@@ -216,13 +219,14 @@ class TimerForegroundService : Service() {
     private fun startUpdateLoop() {
         if (updateJob?.isActive == true) return
 
-        updateJob = serviceScope.launch {
-            while (isTimerRunning || isStopwatchRunning) {
-                updateStates()
-                updateNotification()
-                delay(UPDATE_INTERVAL_MS)
+        updateJob =
+            serviceScope.launch {
+                while (isTimerRunning || isStopwatchRunning) {
+                    updateStates()
+                    updateNotification()
+                    delay(UPDATE_INTERVAL_MS)
+                }
             }
-        }
     }
 
     /**
@@ -233,23 +237,25 @@ class TimerForegroundService : Service() {
 
         // 타이머 상태 업데이트
         if (isTimerRunning) {
-            _timerStates.value = _timerStates.value.map { state ->
-                if (state.targetEndTimeMillis > 0) {
-                    state.copy(
-                        remainingMillis = maxOf(0L, state.targetEndTimeMillis - now),
-                    )
-                } else {
-                    state
+            _timerStates.value =
+                _timerStates.value.map { state ->
+                    if (state.targetEndTimeMillis > 0) {
+                        state.copy(
+                            remainingMillis = maxOf(0L, state.targetEndTimeMillis - now),
+                        )
+                    } else {
+                        state
+                    }
                 }
-            }
         }
 
         // 스톱워치 상태 업데이트
         if (isStopwatchRunning) {
             _stopwatchState.value?.let { state ->
-                _stopwatchState.value = state.copy(
-                    elapsedMillis = now - state.startTimeMillis,
-                )
+                _stopwatchState.value =
+                    state.copy(
+                        elapsedMillis = now - state.startTimeMillis,
+                    )
             }
         }
     }
@@ -273,27 +279,30 @@ class TimerForegroundService : Service() {
      * 알림 빌드
      */
     private fun buildNotification(): androidx.core.app.NotificationCompat.Builder {
-        val (title, content) = when {
-            isTimerRunning && isStopwatchRunning -> {
-                val timerCount = _timerStates.value.size
-                getString(R.string.timer_foreground_title) to
-                    "${getString(R.string.timer_count, timerCount)}, ${getString(R.string.stopwatch_foreground_title)}"
+        val (title, content) =
+            when {
+                isTimerRunning && isStopwatchRunning -> {
+                    val timerCount = _timerStates.value.size
+                    val content =
+                        "${getString(R.string.timer_count, timerCount)}, " +
+                            getString(R.string.stopwatch_foreground_title)
+                    getString(R.string.timer_foreground_title) to content
+                }
+                isTimerRunning -> {
+                    val firstTimer = _timerStates.value.firstOrNull()
+                    val timerText = firstTimer?.let { formatTime(it.remainingMillis) } ?: ""
+                    getString(R.string.timer_foreground_title) to
+                        getString(R.string.timer_remaining, timerText)
+                }
+                isStopwatchRunning -> {
+                    val elapsed = _stopwatchState.value?.elapsedMillis ?: 0L
+                    getString(R.string.stopwatch_foreground_title) to
+                        getString(R.string.stopwatch_elapsed, formatTime(elapsed))
+                }
+                else -> {
+                    "Tikka Timer" to ""
+                }
             }
-            isTimerRunning -> {
-                val firstTimer = _timerStates.value.firstOrNull()
-                val timerText = firstTimer?.let { formatTime(it.remainingMillis) } ?: ""
-                getString(R.string.timer_foreground_title) to
-                    getString(R.string.timer_remaining, timerText)
-            }
-            isStopwatchRunning -> {
-                val elapsed = _stopwatchState.value?.elapsedMillis ?: 0L
-                getString(R.string.stopwatch_foreground_title) to
-                    getString(R.string.stopwatch_elapsed, formatTime(elapsed))
-            }
-            else -> {
-                "Tikka Timer" to ""
-            }
-        }
 
         return notificationHelper.buildForegroundNotification(title, content)
     }

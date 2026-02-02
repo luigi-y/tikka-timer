@@ -2,7 +2,6 @@ package com.tikkatimer.presentation.stopwatch
 
 import android.content.Context
 import com.tikkatimer.domain.model.StopwatchState
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

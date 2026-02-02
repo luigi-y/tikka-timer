@@ -24,21 +24,22 @@ import javax.inject.Singleton
 class AlarmSoundManager
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
     ) {
         private var mediaPlayer: MediaPlayer? = null
-        private val vibrator: Vibrator? = try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
-                vibratorManager?.defaultVibrator
-            } else {
-                @Suppress("DEPRECATION")
-                context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        private val vibrator: Vibrator? =
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                    vibratorManager?.defaultVibrator
+                } else {
+                    @Suppress("DEPRECATION")
+                    context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to get vibrator service", e)
+                null
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get vibrator service", e)
-            null
-        }
 
         companion object {
             private const val TAG = "AlarmSoundManager"
@@ -62,18 +63,19 @@ class AlarmSoundManager
                 val uri = getAlarmSoundUri(soundType, ringtoneUri)
                 Log.d(TAG, "Starting alarm sound: $uri")
 
-                mediaPlayer = MediaPlayer().apply {
-                    setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_ALARM)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                            .build(),
-                    )
-                    setDataSource(context, uri)
-                    isLooping = true
-                    prepare()
-                    start()
-                }
+                mediaPlayer =
+                    MediaPlayer().apply {
+                        setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_ALARM)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .build(),
+                        )
+                        setDataSource(context, uri)
+                        isLooping = true
+                        prepare()
+                        start()
+                    }
 
                 Log.d(TAG, "Alarm sound started successfully")
             } catch (e: Exception) {
@@ -167,8 +169,9 @@ class AlarmSoundManager
             soundType: SoundType,
             ringtoneUri: String?,
         ): Uri {
-            val defaultAlarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val defaultAlarmUri =
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                    ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
             return when (soundType) {
                 SoundType.CUSTOM -> {
@@ -189,24 +192,25 @@ class AlarmSoundManager
          */
         private fun tryPlayDefaultAlarm() {
             try {
-                val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                    ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val uri =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                        ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-                mediaPlayer = MediaPlayer().apply {
-                    setAudioAttributes(
-                        AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_ALARM)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                            .build(),
-                    )
-                    setDataSource(context, uri)
-                    isLooping = true
-                    prepare()
-                    start()
-                }
+                mediaPlayer =
+                    MediaPlayer().apply {
+                        setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_ALARM)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .build(),
+                        )
+                        setDataSource(context, uri)
+                        isLooping = true
+                        prepare()
+                        start()
+                    }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to play default alarm", e)
             }
         }
     }
-

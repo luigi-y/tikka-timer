@@ -109,6 +109,9 @@
     <string name="settings_app_info">Tikka Timer 앱 정보</string>
     <string name="settings_version">버전</string>
 
+    <!-- Language options -->
+    <string name="language_system">시스템 설정</string>
+
     <!-- Theme modes -->
     <string name="theme_system">시스템 설정</string>
     <string name="theme_light">라이트 모드</string>

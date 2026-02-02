@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.tikkatimer.R
 import com.tikkatimer.presentation.alarm.AlarmRingingActivity
@@ -22,7 +21,7 @@ import javax.inject.Singleton
 class NotificationHelper
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
     ) {
         private val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -46,34 +45,37 @@ class NotificationHelper
          */
         private fun createNotificationChannels() {
             // 알람 채널 (높은 중요도)
-            val alarmChannel = NotificationChannel(
-                ALARM_CHANNEL_ID,
-                context.getString(R.string.notification_channel_alarm),
-                NotificationManager.IMPORTANCE_HIGH,
-            ).apply {
-                description = context.getString(R.string.notification_channel_alarm_desc)
-                enableVibration(true)
-                setBypassDnd(true)
-            }
+            val alarmChannel =
+                NotificationChannel(
+                    ALARM_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_alarm),
+                    NotificationManager.IMPORTANCE_HIGH,
+                ).apply {
+                    description = context.getString(R.string.notification_channel_alarm_desc)
+                    enableVibration(true)
+                    setBypassDnd(true)
+                }
 
             // 타이머 채널 (높은 중요도)
-            val timerChannel = NotificationChannel(
-                TIMER_CHANNEL_ID,
-                context.getString(R.string.notification_channel_timer),
-                NotificationManager.IMPORTANCE_HIGH,
-            ).apply {
-                description = context.getString(R.string.notification_channel_timer_desc)
-                enableVibration(true)
-            }
+            val timerChannel =
+                NotificationChannel(
+                    TIMER_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_timer),
+                    NotificationManager.IMPORTANCE_HIGH,
+                ).apply {
+                    description = context.getString(R.string.notification_channel_timer_desc)
+                    enableVibration(true)
+                }
 
             // Foreground Service 채널 (낮은 중요도)
-            val foregroundChannel = NotificationChannel(
-                FOREGROUND_CHANNEL_ID,
-                context.getString(R.string.notification_channel_foreground),
-                NotificationManager.IMPORTANCE_LOW,
-            ).apply {
-                description = context.getString(R.string.notification_channel_foreground_desc)
-            }
+            val foregroundChannel =
+                NotificationChannel(
+                    FOREGROUND_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_foreground),
+                    NotificationManager.IMPORTANCE_LOW,
+                ).apply {
+                    description = context.getString(R.string.notification_channel_foreground_desc)
+                }
 
             notificationManager.createNotificationChannels(
                 listOf(alarmChannel, timerChannel, foregroundChannel),
@@ -89,42 +91,48 @@ class NotificationHelper
             timeText: String,
         ): NotificationCompat.Builder {
             // 알람 울림 Activity 실행 Intent
-            val fullScreenIntent = Intent(context, AlarmRingingActivity::class.java).apply {
-                putExtra(AlarmRingingActivity.EXTRA_ALARM_ID, alarmId)
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_SINGLE_TOP
-            }
-            val fullScreenPendingIntent = PendingIntent.getActivity(
-                context,
-                alarmId.toInt(),
-                fullScreenIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val fullScreenIntent =
+                Intent(context, AlarmRingingActivity::class.java).apply {
+                    putExtra(AlarmRingingActivity.EXTRA_ALARM_ID, alarmId)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+            val fullScreenPendingIntent =
+                PendingIntent.getActivity(
+                    context,
+                    alarmId.toInt(),
+                    fullScreenIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
 
             // 해제 버튼 Intent
-            val dismissIntent = Intent(context, AlarmRingingService::class.java).apply {
-                action = AlarmRingingService.ACTION_DISMISS
-                putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
-            }
-            val dismissPendingIntent = PendingIntent.getService(
-                context,
-                alarmId.toInt() + 1000,
-                dismissIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val dismissIntent =
+                Intent(context, AlarmRingingService::class.java).apply {
+                    action = AlarmRingingService.ACTION_DISMISS
+                    putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
+                }
+            val dismissPendingIntent =
+                PendingIntent.getService(
+                    context,
+                    alarmId.toInt() + 1000,
+                    dismissIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
 
             // 스누즈 버튼 Intent
-            val snoozeIntent = Intent(context, AlarmRingingService::class.java).apply {
-                action = AlarmRingingService.ACTION_SNOOZE
-                putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
-            }
-            val snoozePendingIntent = PendingIntent.getService(
-                context,
-                alarmId.toInt() + 2000,
-                snoozeIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val snoozeIntent =
+                Intent(context, AlarmRingingService::class.java).apply {
+                    action = AlarmRingingService.ACTION_SNOOZE
+                    putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
+                }
+            val snoozePendingIntent =
+                PendingIntent.getService(
+                    context,
+                    alarmId.toInt() + 2000,
+                    snoozeIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
 
             val title = label?.ifEmpty { null } ?: context.getString(R.string.alarm_notification_title)
 
@@ -158,15 +166,17 @@ class NotificationHelper
             content: String,
         ): NotificationCompat.Builder {
             val packageManager = context.packageManager
-            val launchIntent = packageManager.getLaunchIntentForPackage(context.packageName)
-                ?: Intent()
+            val launchIntent =
+                packageManager.getLaunchIntentForPackage(context.packageName)
+                    ?: Intent()
 
-            val pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                launchIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
+            val pendingIntent =
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    launchIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
 
             return NotificationCompat.Builder(context, FOREGROUND_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_timer)

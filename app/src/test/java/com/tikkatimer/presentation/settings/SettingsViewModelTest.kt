@@ -34,13 +34,14 @@ class SettingsViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        settingsDataStore = mockk {
-            every { settingsFlow } returns flowOf(AppSettings.DEFAULT)
-            coEvery { setThemeMode(any()) } returns Unit
-            coEvery { setColorTheme(any()) } returns Unit
-            coEvery { setLanguage(any()) } returns Unit
-            coEvery { resetSettings() } returns Unit
-        }
+        settingsDataStore =
+            mockk {
+                every { settingsFlow } returns flowOf(AppSettings.DEFAULT)
+                coEvery { setThemeMode(any()) } returns Unit
+                coEvery { setColorTheme(any()) } returns Unit
+                coEvery { setLanguage(any()) } returns Unit
+                coEvery { resetSettings() } returns Unit
+            }
 
         viewModel = SettingsViewModel(settingsDataStore)
     }

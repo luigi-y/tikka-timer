@@ -34,7 +34,7 @@ import javax.inject.Inject
 class TimerViewModel
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
         private val getTimerPresetsUseCase: GetTimerPresetsUseCase,
         private val saveTimerPresetUseCase: SaveTimerPresetUseCase,
         private val deleteTimerPresetUseCase: DeleteTimerPresetUseCase,
@@ -607,13 +607,14 @@ class TimerViewModel
          * Foreground Service 시작
          */
         private fun startForegroundService(timer: RunningTimer) {
-            val intent = Intent(context, TimerForegroundService::class.java).apply {
-                action = TimerForegroundService.ACTION_START_TIMER
-                putExtra(TimerForegroundService.EXTRA_TIMER_ID, timer.instanceId)
-                putExtra(TimerForegroundService.EXTRA_TIMER_NAME, timer.name)
-                putExtra(TimerForegroundService.EXTRA_REMAINING_MILLIS, timer.remainingMillis)
-                putExtra(TimerForegroundService.EXTRA_TARGET_END_TIME, timer.targetEndTimeMillis)
-            }
+            val intent =
+                Intent(context, TimerForegroundService::class.java).apply {
+                    action = TimerForegroundService.ACTION_START_TIMER
+                    putExtra(TimerForegroundService.EXTRA_TIMER_ID, timer.instanceId)
+                    putExtra(TimerForegroundService.EXTRA_TIMER_NAME, timer.name)
+                    putExtra(TimerForegroundService.EXTRA_REMAINING_MILLIS, timer.remainingMillis)
+                    putExtra(TimerForegroundService.EXTRA_TARGET_END_TIME, timer.targetEndTimeMillis)
+                }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
@@ -626,10 +627,11 @@ class TimerViewModel
          * Foreground Service 중지
          */
         private fun stopForegroundService(instanceId: String) {
-            val intent = Intent(context, TimerForegroundService::class.java).apply {
-                action = TimerForegroundService.ACTION_STOP_TIMER
-                putExtra(TimerForegroundService.EXTRA_TIMER_ID, instanceId)
-            }
+            val intent =
+                Intent(context, TimerForegroundService::class.java).apply {
+                    action = TimerForegroundService.ACTION_STOP_TIMER
+                    putExtra(TimerForegroundService.EXTRA_TIMER_ID, instanceId)
+                }
             context.startService(intent)
         }
 

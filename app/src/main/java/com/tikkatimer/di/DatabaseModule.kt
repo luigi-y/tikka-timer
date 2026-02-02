@@ -31,7 +31,7 @@ object DatabaseModule {
             // 모든 마이그레이션 순차 적용
             .addMigrations(*AppDatabase.ALL_MIGRATIONS)
             // 마이그레이션 실패 시 데이터 삭제 후 재생성 (최후의 수단)
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
 

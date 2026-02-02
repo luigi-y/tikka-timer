@@ -1,0 +1,8 @@
+🎉 Initial Release
+
+• Alarm clock with repeat and snooze
+• Timer with presets and circular progress
+• Stopwatch with lap times
+• 6 color themes
+• Light/Dark mode support
+• Multi-language support (EN, KO, JA, ZH)

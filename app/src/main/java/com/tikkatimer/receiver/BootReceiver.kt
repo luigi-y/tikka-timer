@@ -20,6 +20,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BootReceiver : BroadcastReceiver() {
     @Inject lateinit var alarmRepository: AlarmRepository
+
     @Inject lateinit var alarmScheduler: AlarmScheduler
 
     companion object {

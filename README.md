@@ -1,106 +1,112 @@
+<p align="center">
+  <img src="feature_graphic.png" alt="Tikka Timer">
+</p>
+
 # Tikka Timer
 
-알람시계, 타이머, 스톱워치 기능을 제공하는 안드로이드 앱입니다.
+An Android app that provides alarm clock, timer, and stopwatch features.
 
-## 주요 기능
+[한국어](README.ko.md)
 
-### 알람
-- 알람 추가/편집/삭제
-- 반복 알람 설정 (요일별)
-- 스누즈 기능
-- 진동 설정
-- 커스텀 알람음 지원
+## Features
 
-### 타이머
-- 시/분/초 설정
-- 일시정지/재개/리셋
-- +1분 추가 기능
-- 타이머 프리셋 저장
-- 원형 진행 표시기
+### Alarm
+- Add/Edit/Delete alarms
+- Repeat alarms (by day of week)
+- Snooze functionality
+- Vibration settings
+- Custom alarm sounds
 
-### 스톱워치
-- 시작/일시정지/리셋
-- 랩 타임 기록
-- 밀리초 단위 표시
-- 최고/최저 랩 타임 표시
+### Timer
+- Hours/Minutes/Seconds setting
+- Pause/Resume/Reset
+- +1 minute quick add
+- Timer presets
+- Circular progress indicator
 
-## 기술 스택
+### Stopwatch
+- Start/Pause/Reset
+- Lap time recording
+- Millisecond precision
+- Best/Worst lap time display
 
-| 구분 | 기술 |
-|------|------|
-| **언어** | Kotlin 2.0 |
+## Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Language** | Kotlin 2.0 |
 | **UI** | Jetpack Compose + Material Design 3 |
-| **아키텍처** | MVVM + Clean Architecture |
+| **Architecture** | MVVM + Clean Architecture |
 | **DI** | Hilt |
-| **비동기** | Coroutines + Flow |
-| **로컬 DB** | Room |
-| **테스트** | JUnit, Mockk, Turbine |
+| **Async** | Coroutines + Flow |
+| **Local DB** | Room |
+| **Testing** | JUnit, Mockk, Turbine |
 
-## 프로젝트 구조
+## Project Structure
 
 ```
 app/src/main/java/com/tikkatimer/
-├── data/                    # Data 레이어
+├── data/                    # Data Layer
 │   ├── local/               # Room Database
-│   │   ├── dao/             # DAO 인터페이스
-│   │   └── entity/          # Entity 클래스
-│   ├── mapper/              # Entity <-> Domain 변환
-│   └── repository/          # Repository 구현체
-├── domain/                  # Domain 레이어
-│   ├── model/               # 도메인 모델
-│   ├── repository/          # Repository 인터페이스
-│   └── usecase/             # UseCase 클래스
-├── presentation/            # Presentation 레이어
-│   ├── alarm/               # 알람 화면
-│   ├── timer/               # 타이머 화면
-│   ├── stopwatch/           # 스톱워치 화면
-│   ├── settings/            # 설정 화면
-│   └── main/                # 메인 화면 (탭 네비게이션)
-├── di/                      # Hilt 모듈
+│   │   ├── dao/             # DAO Interfaces
+│   │   └── entity/          # Entity Classes
+│   ├── mapper/              # Entity <-> Domain Mapping
+│   └── repository/          # Repository Implementations
+├── domain/                  # Domain Layer
+│   ├── model/               # Domain Models
+│   ├── repository/          # Repository Interfaces
+│   └── usecase/             # UseCase Classes
+├── presentation/            # Presentation Layer
+│   ├── alarm/               # Alarm Screen
+│   ├── timer/               # Timer Screen
+│   ├── stopwatch/           # Stopwatch Screen
+│   ├── settings/            # Settings Screen
+│   └── main/                # Main Screen (Tab Navigation)
+├── di/                      # Hilt Modules
 ├── receiver/                # BroadcastReceiver
-└── ui/theme/                # Compose 테마
+└── ui/theme/                # Compose Theme
 ```
 
-## 빌드 및 실행
+## Build & Run
 
-### 요구사항
-- Android Studio Hedgehog 이상
+### Requirements
+- Android Studio Hedgehog or later
 - JDK 17
 - Android SDK 35
 
-### 빌드
+### Build
 ```bash
 ./gradlew assembleDebug
 ```
 
-### 테스트 실행
+### Run Tests
 ```bash
 # Unit Test
 ./gradlew testDebugUnitTest
 
-# Integration Test (에뮬레이터/디바이스 필요)
+# Integration Test (requires emulator/device)
 ./gradlew connectedDebugAndroidTest
 
-# 커버리지 리포트 생성
+# Generate coverage report
 ./gradlew jacocoTestReport
 ```
 
-### 커버리지 리포트 위치
+### Coverage Report Location
 - HTML: `app/build/reports/jacoco/test/html/index.html`
-- XML (SonarQube용): `app/build/reports/jacoco/test/jacocoTestReport.xml`
+- XML (for SonarQube): `app/build/reports/jacoco/test/jacocoTestReport.xml`
 
-## 테스트 현황
+## Test Coverage
 
-### Unit Test
+### Unit Tests
 - **ViewModel**: StopwatchViewModel, TimerViewModel, AlarmViewModel
 - **UseCase**: Alarm UseCase, Timer UseCase
 - **Repository**: AlarmRepository
 - **Mapper**: AlarmMapper, TimerMapper
 - **Domain Model**: Alarm, Timer, Stopwatch, LapTime
 
-### Integration Test
+### Integration Tests
 - **Room DAO**: AlarmDao, TimerPresetDao
 
-## 라이선스
+## License
 
 MIT License

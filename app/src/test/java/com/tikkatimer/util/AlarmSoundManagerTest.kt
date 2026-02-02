@@ -12,7 +12,6 @@ import org.junit.Test
  * 소리/진동 패턴 및 타입이 올바르게 정의되어 있는지 검증
  */
 class AlarmSoundManagerTest {
-
     // ===== VibrationPattern 테스트 =====
 
     @Test

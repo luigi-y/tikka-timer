@@ -33,10 +33,11 @@ class TimerRepositoryImplTest {
     @Test
     fun `getAllPresets는 DAO의 getAllPresets를 호출한다`() =
         runTest {
-            val entities = listOf(
-                createTestEntity(1, "5분 타이머"),
-                createTestEntity(2, "10분 타이머"),
-            )
+            val entities =
+                listOf(
+                    createTestEntity(1, "5분 타이머"),
+                    createTestEntity(2, "10분 타이머"),
+                )
             every { timerPresetDao.getAllPresets() } returns flowOf(entities)
 
             val result = repository.getAllPresets().first()
@@ -73,13 +74,14 @@ class TimerRepositoryImplTest {
         runTest {
             coEvery { timerPresetDao.insertPreset(any()) } returns 1L
 
-            val preset = com.tikkatimer.domain.model.TimerPreset(
-                id = 0,
-                name = "새 프리셋",
-                durationSeconds = 300,
-                soundType = SoundType.DEFAULT,
-                vibrationPattern = VibrationPattern.DEFAULT,
-            )
+            val preset =
+                com.tikkatimer.domain.model.TimerPreset(
+                    id = 0,
+                    name = "새 프리셋",
+                    durationSeconds = 300,
+                    soundType = SoundType.DEFAULT,
+                    vibrationPattern = VibrationPattern.DEFAULT,
+                )
             val result = repository.addPreset(preset)
 
             assertEquals(1L, result)
@@ -91,13 +93,14 @@ class TimerRepositoryImplTest {
         runTest {
             coEvery { timerPresetDao.updatePreset(any()) } returns Unit
 
-            val preset = com.tikkatimer.domain.model.TimerPreset(
-                id = 1,
-                name = "수정된 프리셋",
-                durationSeconds = 600,
-                soundType = SoundType.BELL,
-                vibrationPattern = VibrationPattern.STRONG,
-            )
+            val preset =
+                com.tikkatimer.domain.model.TimerPreset(
+                    id = 1,
+                    name = "수정된 프리셋",
+                    durationSeconds = 600,
+                    soundType = SoundType.BELL,
+                    vibrationPattern = VibrationPattern.STRONG,
+                )
             repository.updatePreset(preset)
 
             coVerify { timerPresetDao.updatePreset(any()) }

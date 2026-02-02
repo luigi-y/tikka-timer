@@ -1,6 +1,5 @@
 package com.tikkatimer.service
 
-import android.content.Intent
 import com.tikkatimer.domain.model.Alarm
 import com.tikkatimer.domain.model.SoundType
 import com.tikkatimer.domain.model.VibrationPattern
@@ -20,7 +19,6 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalTime
@@ -56,166 +54,180 @@ class AlarmRingingServiceTest {
     // ===== 소리/진동 조합 테스트 =====
 
     @Test
-    fun `DEFAULT 소리와 DEFAULT 진동이 모두 시작된다`() = runTest {
-        val soundType = SoundType.DEFAULT
-        val vibrationPattern = VibrationPattern.DEFAULT
+    fun `DEFAULT 소리와 DEFAULT 진동이 모두 시작된다`() =
+        runTest {
+            val soundType = SoundType.DEFAULT
+            val vibrationPattern = VibrationPattern.DEFAULT
 
-        alarmSoundManager.startAlarmSound(soundType, null)
-        alarmSoundManager.startVibration(vibrationPattern)
+            alarmSoundManager.startAlarmSound(soundType, null)
+            alarmSoundManager.startVibration(vibrationPattern)
 
-        verify { alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null) }
-        verify { alarmSoundManager.startVibration(VibrationPattern.DEFAULT) }
-    }
-
-    @Test
-    fun `SILENT 소리와 DEFAULT 진동 조합 - 진동만 동작`() = runTest {
-        val soundType = SoundType.SILENT
-        val vibrationPattern = VibrationPattern.DEFAULT
-
-        alarmSoundManager.startAlarmSound(soundType, null)
-        alarmSoundManager.startVibration(vibrationPattern)
-
-        verify { alarmSoundManager.startAlarmSound(SoundType.SILENT, null) }
-        verify { alarmSoundManager.startVibration(VibrationPattern.DEFAULT) }
-    }
+            verify { alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null) }
+            verify { alarmSoundManager.startVibration(VibrationPattern.DEFAULT) }
+        }
 
     @Test
-    fun `DEFAULT 소리와 NONE 진동 조합 - 소리만 동작`() = runTest {
-        val soundType = SoundType.DEFAULT
-        val vibrationPattern = VibrationPattern.NONE
+    fun `SILENT 소리와 DEFAULT 진동 조합 - 진동만 동작`() =
+        runTest {
+            val soundType = SoundType.SILENT
+            val vibrationPattern = VibrationPattern.DEFAULT
 
-        alarmSoundManager.startAlarmSound(soundType, null)
-        alarmSoundManager.startVibration(vibrationPattern)
+            alarmSoundManager.startAlarmSound(soundType, null)
+            alarmSoundManager.startVibration(vibrationPattern)
 
-        verify { alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null) }
-        verify { alarmSoundManager.startVibration(VibrationPattern.NONE) }
-    }
+            verify { alarmSoundManager.startAlarmSound(SoundType.SILENT, null) }
+            verify { alarmSoundManager.startVibration(VibrationPattern.DEFAULT) }
+        }
 
     @Test
-    fun `SILENT 소리와 NONE 진동 조합 - 아무것도 동작하지 않음`() = runTest {
-        val soundType = SoundType.SILENT
-        val vibrationPattern = VibrationPattern.NONE
+    fun `DEFAULT 소리와 NONE 진동 조합 - 소리만 동작`() =
+        runTest {
+            val soundType = SoundType.DEFAULT
+            val vibrationPattern = VibrationPattern.NONE
 
-        alarmSoundManager.startAlarmSound(soundType, null)
-        alarmSoundManager.startVibration(vibrationPattern)
+            alarmSoundManager.startAlarmSound(soundType, null)
+            alarmSoundManager.startVibration(vibrationPattern)
 
-        verify { alarmSoundManager.startAlarmSound(SoundType.SILENT, null) }
-        verify { alarmSoundManager.startVibration(VibrationPattern.NONE) }
-    }
+            verify { alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null) }
+            verify { alarmSoundManager.startVibration(VibrationPattern.NONE) }
+        }
+
+    @Test
+    fun `SILENT 소리와 NONE 진동 조합 - 아무것도 동작하지 않음`() =
+        runTest {
+            val soundType = SoundType.SILENT
+            val vibrationPattern = VibrationPattern.NONE
+
+            alarmSoundManager.startAlarmSound(soundType, null)
+            alarmSoundManager.startVibration(vibrationPattern)
+
+            verify { alarmSoundManager.startAlarmSound(SoundType.SILENT, null) }
+            verify { alarmSoundManager.startVibration(VibrationPattern.NONE) }
+        }
 
     // ===== 진동 패턴 테스트 =====
 
     @Test
-    fun `STRONG 진동 패턴이 올바르게 적용된다`() = runTest {
-        val vibrationPattern = VibrationPattern.STRONG
+    fun `STRONG 진동 패턴이 올바르게 적용된다`() =
+        runTest {
+            val vibrationPattern = VibrationPattern.STRONG
 
-        alarmSoundManager.startVibration(vibrationPattern)
+            alarmSoundManager.startVibration(vibrationPattern)
 
-        verify { alarmSoundManager.startVibration(VibrationPattern.STRONG) }
-    }
+            verify { alarmSoundManager.startVibration(VibrationPattern.STRONG) }
+        }
 
     @Test
-    fun `HEARTBEAT 진동 패턴이 올바르게 적용된다`() = runTest {
-        val vibrationPattern = VibrationPattern.HEARTBEAT
+    fun `HEARTBEAT 진동 패턴이 올바르게 적용된다`() =
+        runTest {
+            val vibrationPattern = VibrationPattern.HEARTBEAT
 
-        alarmSoundManager.startVibration(vibrationPattern)
+            alarmSoundManager.startVibration(vibrationPattern)
 
-        verify { alarmSoundManager.startVibration(VibrationPattern.HEARTBEAT) }
-    }
+            verify { alarmSoundManager.startVibration(VibrationPattern.HEARTBEAT) }
+        }
 
     // ===== 소리 타입 테스트 =====
 
     @Test
-    fun `BELL 소리 타입이 올바르게 적용된다`() = runTest {
-        val soundType = SoundType.BELL
+    fun `BELL 소리 타입이 올바르게 적용된다`() =
+        runTest {
+            val soundType = SoundType.BELL
 
-        alarmSoundManager.startAlarmSound(soundType, null)
+            alarmSoundManager.startAlarmSound(soundType, null)
 
-        verify { alarmSoundManager.startAlarmSound(SoundType.BELL, null) }
-    }
-
-    @Test
-    fun `DIGITAL 소리 타입이 올바르게 적용된다`() = runTest {
-        val soundType = SoundType.DIGITAL
-
-        alarmSoundManager.startAlarmSound(soundType, null)
-
-        verify { alarmSoundManager.startAlarmSound(SoundType.DIGITAL, null) }
-    }
+            verify { alarmSoundManager.startAlarmSound(SoundType.BELL, null) }
+        }
 
     @Test
-    fun `CUSTOM 소리 타입과 커스텀 URI가 올바르게 적용된다`() = runTest {
-        val soundType = SoundType.CUSTOM
-        val customUri = "content://media/external/audio/123"
+    fun `DIGITAL 소리 타입이 올바르게 적용된다`() =
+        runTest {
+            val soundType = SoundType.DIGITAL
 
-        alarmSoundManager.startAlarmSound(soundType, customUri)
+            alarmSoundManager.startAlarmSound(soundType, null)
 
-        verify { alarmSoundManager.startAlarmSound(SoundType.CUSTOM, customUri) }
-    }
+            verify { alarmSoundManager.startAlarmSound(SoundType.DIGITAL, null) }
+        }
+
+    @Test
+    fun `CUSTOM 소리 타입과 커스텀 URI가 올바르게 적용된다`() =
+        runTest {
+            val soundType = SoundType.CUSTOM
+            val customUri = "content://media/external/audio/123"
+
+            alarmSoundManager.startAlarmSound(soundType, customUri)
+
+            verify { alarmSoundManager.startAlarmSound(SoundType.CUSTOM, customUri) }
+        }
 
     // ===== 알람 해제/스누즈 테스트 =====
 
     @Test
-    fun `알람 해제 시 소리와 진동이 모두 중지된다`() = runTest {
-        alarmSoundManager.stopAll()
+    fun `알람 해제 시 소리와 진동이 모두 중지된다`() =
+        runTest {
+            alarmSoundManager.stopAll()
 
-        verify { alarmSoundManager.stopAll() }
-    }
-
-    @Test
-    fun `반복 알람 해제 시 다음 알람이 스케줄된다`() = runTest {
-        val alarm = createTestAlarm(isRepeating = true, isEnabled = true)
-        coEvery { alarmRepository.getAlarmById(1L) } returns alarm
-
-        // 반복 알람이면 다음 스케줄 호출 확인
-        val result = alarmRepository.getAlarmById(1L)
-        if (result != null && result.isRepeating && result.isEnabled) {
-            alarmScheduler.schedule(result)
+            verify { alarmSoundManager.stopAll() }
         }
 
-        verify { alarmScheduler.schedule(alarm) }
-    }
+    @Test
+    fun `반복 알람 해제 시 다음 알람이 스케줄된다`() =
+        runTest {
+            val alarm = createTestAlarm(isRepeating = true, isEnabled = true)
+            coEvery { alarmRepository.getAlarmById(1L) } returns alarm
+
+            // 반복 알람이면 다음 스케줄 호출 확인
+            val result = alarmRepository.getAlarmById(1L)
+            if (result != null && result.isRepeating && result.isEnabled) {
+                alarmScheduler.schedule(result)
+            }
+
+            verify { alarmScheduler.schedule(alarm) }
+        }
 
     @Test
-    fun `1회성 알람 해제 시 알람이 비활성화된다`() = runTest {
-        coEvery { alarmRepository.setAlarmEnabled(1L, false) } returns Unit
+    fun `1회성 알람 해제 시 알람이 비활성화된다`() =
+        runTest {
+            coEvery { alarmRepository.setAlarmEnabled(1L, false) } returns Unit
 
-        alarmRepository.setAlarmEnabled(1L, false)
+            alarmRepository.setAlarmEnabled(1L, false)
 
-        coVerify { alarmRepository.setAlarmEnabled(1L, false) }
-    }
+            coVerify { alarmRepository.setAlarmEnabled(1L, false) }
+        }
 
     // ===== 에러 핸들링 테스트 =====
 
     @Test
-    fun `소리 시작 실패해도 진동은 시작된다`() = runTest {
-        every { alarmSoundManager.startAlarmSound(any(), any()) } throws RuntimeException("Sound error")
+    fun `소리 시작 실패해도 진동은 시작된다`() =
+        runTest {
+            every { alarmSoundManager.startAlarmSound(any(), any()) } throws RuntimeException("Sound error")
 
-        try {
-            alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null)
-        } catch (e: Exception) {
-            // 예외 발생
+            try {
+                alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null)
+            } catch (e: Exception) {
+                // 예외 발생
+            }
+
+            // 진동은 독립적으로 시작 가능해야 함
+            alarmSoundManager.startVibration(VibrationPattern.DEFAULT)
+            verify { alarmSoundManager.startVibration(VibrationPattern.DEFAULT) }
         }
-
-        // 진동은 독립적으로 시작 가능해야 함
-        alarmSoundManager.startVibration(VibrationPattern.DEFAULT)
-        verify { alarmSoundManager.startVibration(VibrationPattern.DEFAULT) }
-    }
 
     @Test
-    fun `진동 시작 실패해도 소리는 재생된다`() = runTest {
-        every { alarmSoundManager.startVibration(any()) } throws RuntimeException("Vibration error")
+    fun `진동 시작 실패해도 소리는 재생된다`() =
+        runTest {
+            every { alarmSoundManager.startVibration(any()) } throws RuntimeException("Vibration error")
 
-        // 소리는 독립적으로 시작 가능해야 함
-        alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null)
-        verify { alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null) }
+            // 소리는 독립적으로 시작 가능해야 함
+            alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null)
+            verify { alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null) }
 
-        try {
-            alarmSoundManager.startVibration(VibrationPattern.DEFAULT)
-        } catch (e: Exception) {
-            // 예외 발생
+            try {
+                alarmSoundManager.startVibration(VibrationPattern.DEFAULT)
+            } catch (e: Exception) {
+                // 예외 발생
+            }
         }
-    }
 
     // ===== Helper =====
 
@@ -228,13 +240,18 @@ class AlarmRingingServiceTest {
         time = LocalTime.of(7, 30),
         isEnabled = isEnabled,
         label = "Test Alarm",
-        repeatDays = if (isRepeating) setOf(
-            java.time.DayOfWeek.MONDAY,
-            java.time.DayOfWeek.TUESDAY,
-            java.time.DayOfWeek.WEDNESDAY,
-            java.time.DayOfWeek.THURSDAY,
-            java.time.DayOfWeek.FRIDAY,
-        ) else emptySet(),
+        repeatDays =
+            if (isRepeating) {
+                setOf(
+                    java.time.DayOfWeek.MONDAY,
+                    java.time.DayOfWeek.TUESDAY,
+                    java.time.DayOfWeek.WEDNESDAY,
+                    java.time.DayOfWeek.THURSDAY,
+                    java.time.DayOfWeek.FRIDAY,
+                )
+            } else {
+                emptySet()
+            },
         soundType = SoundType.DEFAULT,
         vibrationPattern = VibrationPattern.DEFAULT,
         snoozeDurationMinutes = 5,

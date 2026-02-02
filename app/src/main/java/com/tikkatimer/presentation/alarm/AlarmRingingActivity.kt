@@ -62,17 +62,18 @@ class AlarmRingingActivity : ComponentActivity() {
     private var alarmTime by mutableStateOf("")
     private var snoozeDuration: Int = 5
 
-    private val dismissReceiver = object : BroadcastReceiver() {
-        override fun onReceive(
-            context: Context?,
-            intent: Intent?,
-        ) {
-            val dismissedAlarmId = intent?.getLongExtra(AlarmRingingService.EXTRA_ALARM_ID, -1) ?: -1
-            if (dismissedAlarmId == alarmId || dismissedAlarmId == -1L) {
-                finish()
+    private val dismissReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context?,
+                intent: Intent?,
+            ) {
+                val dismissedAlarmId = intent?.getLongExtra(AlarmRingingService.EXTRA_ALARM_ID, -1) ?: -1
+                if (dismissedAlarmId == alarmId || dismissedAlarmId == -1L) {
+                    finish()
+                }
             }
         }
-    }
 
     companion object {
         const val EXTRA_ALARM_ID = "extra_alarm_id"
@@ -95,10 +96,11 @@ class AlarmRingingActivity : ComponentActivity() {
         snoozeDuration = intent.getIntExtra(EXTRA_SNOOZE_DURATION, 5)
 
         // 알람 해제/스누즈 브로드캐스트 수신 등록
-        val filter = IntentFilter().apply {
-            addAction("com.tikkatimer.ALARM_DISMISSED")
-            addAction("com.tikkatimer.ALARM_SNOOZED")
-        }
+        val filter =
+            IntentFilter().apply {
+                addAction("com.tikkatimer.ALARM_DISMISSED")
+                addAction("com.tikkatimer.ALARM_SNOOZED")
+            }
         ContextCompat.registerReceiver(
             this,
             dismissReceiver,
@@ -145,10 +147,11 @@ class AlarmRingingActivity : ComponentActivity() {
      * 알람 해제
      */
     private fun dismissAlarm() {
-        val dismissIntent = Intent(this, AlarmRingingService::class.java).apply {
-            action = AlarmRingingService.ACTION_DISMISS
-            putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
-        }
+        val dismissIntent =
+            Intent(this, AlarmRingingService::class.java).apply {
+                action = AlarmRingingService.ACTION_DISMISS
+                putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
+            }
         startService(dismissIntent)
     }
 
@@ -156,11 +159,12 @@ class AlarmRingingActivity : ComponentActivity() {
      * 스누즈
      */
     private fun snoozeAlarm() {
-        val snoozeIntent = Intent(this, AlarmRingingService::class.java).apply {
-            action = AlarmRingingService.ACTION_SNOOZE
-            putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
-            putExtra(AlarmRingingService.EXTRA_SNOOZE_DURATION, snoozeDuration)
-        }
+        val snoozeIntent =
+            Intent(this, AlarmRingingService::class.java).apply {
+                action = AlarmRingingService.ACTION_SNOOZE
+                putExtra(AlarmRingingService.EXTRA_ALARM_ID, alarmId)
+                putExtra(AlarmRingingService.EXTRA_SNOOZE_DURATION, snoozeDuration)
+            }
         startService(snoozeIntent)
     }
 
@@ -173,6 +177,7 @@ class AlarmRingingActivity : ComponentActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // 뒤로 가기 비활성화 - 사용자가 명시적으로 해제/스누즈 해야 함
     }
@@ -193,18 +198,20 @@ private fun AlarmRingingScreen(
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             // 알람 아이콘
             Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                modifier =
+                    Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -245,10 +252,11 @@ private fun AlarmRingingScreen(
                 // 스누즈 버튼
                 OutlinedButton(
                     onClick = onSnooze,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(56.dp)
-                        .padding(horizontal = 8.dp),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .height(56.dp)
+                            .padding(horizontal = 8.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Snooze,
@@ -262,13 +270,15 @@ private fun AlarmRingingScreen(
                 // 해제 버튼
                 Button(
                     onClick = onDismiss,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(56.dp)
-                        .padding(horizontal = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                    ),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .height(56.dp)
+                            .padding(horizontal = 8.dp),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                        ),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
