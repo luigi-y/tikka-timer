@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="feature_graphic.png" alt="Tikka Timer">
+  <img src="images/feature_graphic.png" alt="Tikka Timer">
 </p>
 
 # Tikka Timer
