@@ -81,6 +81,45 @@
             </intent-filter>
         </receiver>
 
+        <!-- 타이머 위젯 (2x2 중형) -->
+        <receiver
+            android:name=".widget.TimerWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_timer_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/timer_widget_info" />
+        </receiver>
+
+        <!-- 타이머 위젯 (1x1 소형) -->
+        <receiver
+            android:name=".widget.TimerWidgetSmallReceiver"
+            android:exported="true"
+            android:label="@string/widget_timer_small_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/timer_widget_small_info" />
+        </receiver>
+
+        <!-- 타이머 위젯 (4x4 대형) -->
+        <receiver
+            android:name=".widget.TimerWidgetLargeReceiver"
+            android:exported="true"
+            android:label="@string/widget_timer_large_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/timer_widget_large_info" />
+        </receiver>
+
     </application>
 
 </manifest>

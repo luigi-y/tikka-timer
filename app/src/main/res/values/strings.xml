@@ -171,4 +171,16 @@
     <!-- Privacy Policy -->
     <string name="settings_privacy_policy">개인정보 처리방침</string>
     <string name="settings_privacy_policy_desc">개인정보 수집 및 이용 안내</string>
+
+    <!-- Widget -->
+    <string name="timer">타이머</string>
+    <string name="widget_timer_name">타이머 (중형)</string>
+    <string name="widget_timer_description">타이머 상태를 홈 화면에서 확인합니다 (2x2)</string>
+    <string name="widget_timer_small_name">타이머 (소형)</string>
+    <string name="widget_timer_small_description">타이머 상태를 홈 화면에서 확인합니다 (1x1)</string>
+    <string name="widget_timer_large_name">타이머 (대형)</string>
+    <string name="widget_timer_large_description">타이머 상태를 홈 화면에서 확인합니다 (4x4)</string>
+    <string name="widget_tap_to_start">탭하여 시작</string>
+    <string name="widget_running">실행 중</string>
+    <string name="widget_paused">일시정지</string>
 </resources>

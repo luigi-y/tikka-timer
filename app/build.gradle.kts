@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
     id("jacoco")
 }
 
@@ -83,6 +84,25 @@ android {
             isReturnDefaultValues = true
         }
     }
+
+    lint {
+        // lint 설정 파일 지정
+        lintConfig = file("lint.xml")
+        // 심각도 설정
+        warningsAsErrors = false
+        abortOnError = true
+        // 리포트 생성
+        htmlReport = true
+        htmlOutput = file("${layout.buildDirectory.get()}/reports/lint/lint-results.html")
+        xmlReport = true
+        xmlOutput = file("${layout.buildDirectory.get()}/reports/lint/lint-results.xml")
+        // baseline 파일 (기존 이슈 무시)
+        // baseline = file("lint-baseline.xml")
+        // 체크할 이슈 범위
+        checkAllWarnings = true
+        checkReleaseBuilds = true
+        checkDependencies = true
+    }
 }
 
 // 테스트 병렬 실행 설정
@@ -95,6 +115,30 @@ tasks.withType<Test> {
 kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}
+
+// Detekt 설정
+detekt {
+    // 설정 파일 경로
+    config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
+    // 빌드 실패 조건
+    buildUponDefaultConfig = true
+    allRules = false
+    // 병렬 처리
+    parallel = true
+    // 자동 수정 활성화
+    autoCorrect = true
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("${layout.buildDirectory.get()}/reports/detekt/detekt.html"))
+        xml.required.set(true)
+        xml.outputLocation.set(file("${layout.buildDirectory.get()}/reports/detekt/detekt.xml"))
+        sarif.required.set(true)
+        sarif.outputLocation.set(file("${layout.buildDirectory.get()}/reports/detekt/detekt.sarif"))
     }
 }
 
@@ -189,6 +233,10 @@ dependencies {
 
     // DataStore
     implementation(libs.datastore.preferences)
+
+    // Glance (Widget)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
 
     // Unit Testing
     testImplementation(libs.junit)

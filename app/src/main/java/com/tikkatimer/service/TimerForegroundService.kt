@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.util.Log
 import com.tikkatimer.R
 import com.tikkatimer.util.NotificationHelper
+import com.tikkatimer.widget.TimerWidgetUpdater
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -115,6 +116,15 @@ class TimerForegroundService : Service() {
         isTimerRunning = true
         startForegroundIfNeeded()
         startUpdateLoop()
+
+        // 위젯 업데이트
+        TimerWidgetUpdater.onTimerStarted(
+            context = this,
+            timerId = timerId,
+            timerName = timerName,
+            remainingMillis = remainingMillis,
+            totalMillis = remainingMillis,
+        )
     }
 
     /**
@@ -129,6 +139,20 @@ class TimerForegroundService : Service() {
         if (_timerStates.value.isEmpty()) {
             isTimerRunning = false
             stopForegroundIfNotNeeded()
+
+            // 위젯 업데이트 - 타이머 중지
+            TimerWidgetUpdater.onTimerStopped(this)
+        } else {
+            // 다른 실행 중인 타이머가 있으면 해당 타이머로 위젯 업데이트
+            _timerStates.value.firstOrNull()?.let { timer ->
+                TimerWidgetUpdater.onTimerStarted(
+                    context = this,
+                    timerId = timer.id,
+                    timerName = timer.name,
+                    remainingMillis = timer.remainingMillis,
+                    totalMillis = timer.remainingMillis,
+                )
+            }
         }
     }
 
@@ -247,6 +271,14 @@ class TimerForegroundService : Service() {
                         state
                     }
                 }
+
+            // 위젯 업데이트 - 실행 중인 첫 번째 타이머 기준
+            _timerStates.value.firstOrNull()?.let { timer ->
+                TimerWidgetUpdater.onTimerTick(
+                    context = this,
+                    remainingMillis = timer.remainingMillis,
+                )
+            }
         }
 
         // 스톱워치 상태 업데이트
