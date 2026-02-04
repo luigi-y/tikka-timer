@@ -50,8 +50,6 @@ class TimerViewModel
 
         init {
             loadPresets()
-            // ViewModel 초기화 시 모든 상태 동기화 (orphan 서비스/위젯 정리)
-            timerStateSync.clearAll()
         }
 
         private fun loadPresets() {

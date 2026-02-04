@@ -30,6 +30,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.tikkatimer.MainActivity
 import com.tikkatimer.R
+import kotlinx.coroutines.flow.first
 
 /**
  * 1x1 소형 타이머 위젯
@@ -44,11 +45,10 @@ class TimerWidgetSmall : GlanceAppWidget() {
         context: Context,
         id: GlanceId,
     ) {
-        TimerWidgetStateManager.getState(context).collect { state ->
-            provideContent {
-                GlanceTheme {
-                    SmallWidgetContent(context = context, state = state)
-                }
+        val state = TimerWidgetStateManager.getState(context).first()
+        provideContent {
+            GlanceTheme {
+                SmallWidgetContent(context = context, state = state)
             }
         }
     }

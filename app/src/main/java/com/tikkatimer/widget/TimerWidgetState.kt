@@ -19,7 +19,7 @@ data class TimerWidgetState(
     val isRunning: Boolean = false,
     /** 타이머 일시정지 여부 */
     val isPaused: Boolean = false,
-    /** 남은 시간 (밀리초) */
+    /** 남은 시간 (밀리초) - 저장된 시점의 값 */
     val remainingMillis: Long = 0L,
     /** 전체 시간 (밀리초) */
     val totalMillis: Long = 0L,
@@ -34,14 +34,27 @@ data class TimerWidgetState(
     val isEmpty: Boolean
         get() = !isRunning && !isPaused && remainingMillis == 0L
 
+    /**
+     * 현재 시점의 실제 남은 시간 (밀리초)
+     * 실행 중이면 경과 시간을 빼서 계산
+     */
+    val currentRemainingMillis: Long
+        get() {
+            if (!isRunning || lastUpdatedAt == 0L) {
+                return remainingMillis
+            }
+            val elapsed = System.currentTimeMillis() - lastUpdatedAt
+            return maxOf(0L, remainingMillis - elapsed)
+        }
+
     /** 진행률 (0.0 ~ 1.0) */
     val progress: Float
-        get() = if (totalMillis > 0) remainingMillis.toFloat() / totalMillis else 0f
+        get() = if (totalMillis > 0) currentRemainingMillis.toFloat() / totalMillis else 0f
 
     /** 포맷된 남은 시간 (MM:SS 또는 HH:MM:SS) */
     val formattedTime: String
         get() {
-            val totalSeconds = remainingMillis / 1000
+            val totalSeconds = currentRemainingMillis / 1000
             val hours = totalSeconds / 3600
             val minutes = (totalSeconds % 3600) / 60
             val seconds = totalSeconds % 60
@@ -56,7 +69,7 @@ data class TimerWidgetState(
     /** 짧은 포맷의 남은 시간 (소형 위젯용, M:SS) */
     val formattedTimeShort: String
         get() {
-            val totalSeconds = remainingMillis / 1000
+            val totalSeconds = currentRemainingMillis / 1000
             val minutes = totalSeconds / 60
             val seconds = totalSeconds % 60
             return String.format("%d:%02d", minutes, seconds)
