@@ -12,8 +12,6 @@ import com.tikkatimer.domain.model.VibrationPattern
 import com.tikkatimer.service.TimerForegroundService
 import com.tikkatimer.util.AlarmSoundManager
 import com.tikkatimer.util.NotificationHelper
-import com.tikkatimer.widget.TimerWidget
-import com.tikkatimer.widget.TimerWidgetLarge
 import com.tikkatimer.widget.TimerWidgetSmall
 import com.tikkatimer.widget.TimerWidgetStateManager
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -208,6 +206,7 @@ class TimerStateSync
                         timerName = activeTimer.name,
                         remainingMillis = activeTimer.remainingMillis,
                         totalMillis = activeTimer.totalMillis,
+                        targetEndTimeMillis = activeTimer.targetEndTimeMillis,
                     )
                 }
                 pausedTimer != null -> {
@@ -225,19 +224,11 @@ class TimerStateSync
         }
 
         /**
-         * 모든 위젯 업데이트
+         * 위젯 업데이트
          */
         private suspend fun updateWidgets() {
             try {
                 TimerWidgetSmall().updateAll(context)
-            } catch (ignored: Exception) {
-            }
-            try {
-                TimerWidget().updateAll(context)
-            } catch (ignored: Exception) {
-            }
-            try {
-                TimerWidgetLarge().updateAll(context)
             } catch (ignored: Exception) {
             }
         }

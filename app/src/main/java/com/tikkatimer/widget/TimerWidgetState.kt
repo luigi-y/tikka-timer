@@ -29,6 +29,8 @@ data class TimerWidgetState(
     val timerId: String = "",
     /** 마지막 업데이트 시각 */
     val lastUpdatedAt: Long = 0L,
+    /** 타이머 종료 예정 시각 (실시간 계산용) */
+    val targetEndTimeMillis: Long = 0L,
 ) {
     /** 타이머가 없거나 종료된 상태 */
     val isEmpty: Boolean
@@ -36,15 +38,23 @@ data class TimerWidgetState(
 
     /**
      * 현재 시점의 실제 남은 시간 (밀리초)
-     * 실행 중이면 경과 시간을 빼서 계산
+     * 실행 중이면 targetEndTimeMillis 기준으로 계산
      */
     val currentRemainingMillis: Long
         get() {
-            if (!isRunning || lastUpdatedAt == 0L) {
+            if (!isRunning) {
                 return remainingMillis
             }
-            val elapsed = System.currentTimeMillis() - lastUpdatedAt
-            return maxOf(0L, remainingMillis - elapsed)
+            // targetEndTimeMillis가 있으면 실시간 계산
+            if (targetEndTimeMillis > 0) {
+                return maxOf(0L, targetEndTimeMillis - System.currentTimeMillis())
+            }
+            // fallback: lastUpdatedAt 기준 계산
+            if (lastUpdatedAt > 0) {
+                val elapsed = System.currentTimeMillis() - lastUpdatedAt
+                return maxOf(0L, remainingMillis - elapsed)
+            }
+            return remainingMillis
         }
 
     /** 진행률 (0.0 ~ 1.0) */
@@ -99,6 +109,7 @@ object TimerWidgetStateManager {
     private val TIMER_NAME = stringPreferencesKey("timer_name")
     private val TIMER_ID = stringPreferencesKey("timer_id")
     private val LAST_UPDATED_AT = longPreferencesKey("last_updated_at")
+    private val TARGET_END_TIME_MILLIS = longPreferencesKey("target_end_time_millis")
 
     /**
      * 위젯 상태 Flow
@@ -113,6 +124,7 @@ object TimerWidgetStateManager {
                 timerName = prefs[TIMER_NAME] ?: "",
                 timerId = prefs[TIMER_ID] ?: "",
                 lastUpdatedAt = prefs[LAST_UPDATED_AT] ?: 0L,
+                targetEndTimeMillis = prefs[TARGET_END_TIME_MILLIS] ?: 0L,
             )
         }
 
@@ -125,7 +137,10 @@ object TimerWidgetStateManager {
         timerName: String,
         remainingMillis: Long,
         totalMillis: Long,
+        targetEndTimeMillis: Long = 0L,
     ) {
+        val now = System.currentTimeMillis()
+        val endTime = if (targetEndTimeMillis > 0) targetEndTimeMillis else now + remainingMillis
         context.timerWidgetDataStore.edit { prefs ->
             prefs[IS_RUNNING] = true
             prefs[IS_PAUSED] = false
@@ -133,7 +148,8 @@ object TimerWidgetStateManager {
             prefs[TOTAL_MILLIS] = totalMillis
             prefs[TIMER_NAME] = timerName
             prefs[TIMER_ID] = timerId
-            prefs[LAST_UPDATED_AT] = System.currentTimeMillis()
+            prefs[LAST_UPDATED_AT] = now
+            prefs[TARGET_END_TIME_MILLIS] = endTime
         }
     }
 
@@ -177,6 +193,7 @@ object TimerWidgetStateManager {
             prefs[TIMER_NAME] = ""
             prefs[TIMER_ID] = ""
             prefs[LAST_UPDATED_AT] = System.currentTimeMillis()
+            prefs[TARGET_END_TIME_MILLIS] = 0L
         }
     }
 }

@@ -101,24 +101,11 @@ object TimerWidgetUpdater {
     }
 
     /**
-     * 모든 타이머 위젯 업데이트 (소형, 중형, 대형)
+     * 타이머 위젯 업데이트
      */
     private suspend fun updateWidgets(context: Context) {
-        // 각 위젯을 개별적으로 업데이트 (일부 실패해도 다른 위젯은 업데이트)
         try {
             TimerWidgetSmall().updateAll(context)
-        } catch (ignored: Exception) {
-            // 위젯이 없거나 업데이트 실패 시 무시
-        }
-
-        try {
-            TimerWidget().updateAll(context)
-        } catch (ignored: Exception) {
-            // 위젯이 없거나 업데이트 실패 시 무시
-        }
-
-        try {
-            TimerWidgetLarge().updateAll(context)
         } catch (ignored: Exception) {
             // 위젯이 없거나 업데이트 실패 시 무시
         }
