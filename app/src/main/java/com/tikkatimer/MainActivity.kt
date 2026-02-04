@@ -1,12 +1,17 @@
 package com.tikkatimer
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.tikkatimer.data.local.SettingsDataStore
 import com.tikkatimer.domain.model.AppSettings
@@ -29,6 +34,18 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
 
+    /**
+     * 알림 권한 요청 런처 (Android 13+)
+     */
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            // 권한 결과 처리 (거부해도 앱은 계속 사용 가능)
+            if (!isGranted) {
+                // 사용자가 알림 권한을 거부함
+                // 타이머/알람 알림이 표시되지 않을 수 있음
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,6 +54,9 @@ class MainActivity : AppCompatActivity() {
             val settings = settingsDataStore.settingsFlow.first()
             LocaleHelper.setLocale(this@MainActivity, settings.language)
         }
+
+        // 알림 권한 요청 (Android 13+)
+        requestNotificationPermission()
 
         enableEdgeToEdge()
         setContent {
@@ -56,6 +76,18 @@ class MainActivity : AppCompatActivity() {
                 colorTheme = settings.colorTheme,
             ) {
                 MainScreen()
+            }
+        }
+    }
+
+    /**
+     * Android 13+ 알림 권한 요청
+     */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = Manifest.permission.POST_NOTIFICATIONS
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionLauncher.launch(permission)
             }
         }
     }

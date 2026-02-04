@@ -1,8 +1,6 @@
 package com.tikkatimer.presentation.timer
 
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tikkatimer.domain.model.RunningTimer
@@ -13,8 +11,7 @@ import com.tikkatimer.domain.model.VibrationPattern
 import com.tikkatimer.domain.usecase.timer.DeleteTimerPresetUseCase
 import com.tikkatimer.domain.usecase.timer.GetTimerPresetsUseCase
 import com.tikkatimer.domain.usecase.timer.SaveTimerPresetUseCase
-import com.tikkatimer.service.TimerForegroundService
-import com.tikkatimer.widget.TimerWidgetUpdater
+import com.tikkatimer.sync.TimerStateSync
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -39,6 +36,7 @@ class TimerViewModel
         private val getTimerPresetsUseCase: GetTimerPresetsUseCase,
         private val saveTimerPresetUseCase: SaveTimerPresetUseCase,
         private val deleteTimerPresetUseCase: DeleteTimerPresetUseCase,
+        private val timerStateSync: TimerStateSync,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(TimerUiState())
         val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
@@ -52,6 +50,8 @@ class TimerViewModel
 
         init {
             loadPresets()
+            // ViewModel 초기화 시 모든 상태 동기화 (orphan 서비스/위젯 정리)
+            timerStateSync.clearAll()
         }
 
         private fun loadPresets() {
@@ -67,11 +67,12 @@ class TimerViewModel
          */
         fun startTimerFromPreset(preset: TimerPreset) {
             val instanceId = UUID.randomUUID().toString()
+            val totalMillis = preset.durationSeconds * 1000L
             val runningTimer =
                 RunningTimer.fromPreset(preset, instanceId)
                     .copy(
                         state = TimerState.RUNNING,
-                        targetEndTimeMillis = System.currentTimeMillis() + (preset.durationSeconds * 1000L),
+                        targetEndTimeMillis = System.currentTimeMillis() + totalMillis,
                     )
 
             _uiState.update { state ->
@@ -81,6 +82,8 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
+            // 상태 동기화 (알림, 위젯, 서비스)
+            timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
         /**
@@ -121,16 +124,8 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
-            startForegroundService(runningTimer)
-
-            // 위젯 업데이트
-            TimerWidgetUpdater.onTimerStarted(
-                context = context,
-                timerId = runningTimer.instanceId,
-                timerName = runningTimer.name,
-                remainingMillis = runningTimer.remainingMillis,
-                totalMillis = runningTimer.totalDurationMillis,
-            )
+            // 상태 동기화 (알림, 위젯, 서비스)
+            timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
         /**
@@ -156,16 +151,8 @@ class TimerViewModel
             }
 
             stopTickerIfNoRunning()
-            stopForegroundService(instanceId)
-
-            // 위젯 업데이트 - 일시정지 상태
-            val pausedTimer = _uiState.value.runningTimers.find { it.instanceId == instanceId }
-            if (pausedTimer != null) {
-                TimerWidgetUpdater.onTimerPaused(
-                    context = context,
-                    remainingMillis = pausedTimer.remainingMillis,
-                )
-            }
+            // 상태 동기화 (알림, 위젯, 서비스)
+            timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
         /**
@@ -191,20 +178,8 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
-
-            // 재개된 타이머 정보로 Foreground Service 업데이트
-            _uiState.value.runningTimers.find { it.instanceId == instanceId }?.let { timer ->
-                startForegroundService(timer)
-
-                // 위젯 업데이트 - 재개 상태
-                TimerWidgetUpdater.onTimerResumed(
-                    context = context,
-                    timerId = timer.instanceId,
-                    timerName = timer.name,
-                    remainingMillis = timer.remainingMillis,
-                    totalMillis = timer.totalDurationMillis,
-                )
-            }
+            // 상태 동기화 (알림, 위젯, 서비스)
+            timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
         /**
@@ -229,10 +204,8 @@ class TimerViewModel
             }
 
             stopTickerIfNoRunning()
-            stopForegroundService(instanceId)
-
-            // 위젯 업데이트 - 리셋 (대기 상태)
-            updateWidgetForActiveTimer()
+            // 상태 동기화 (알림, 위젯, 서비스)
+            timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
         /**
@@ -246,16 +219,22 @@ class TimerViewModel
             }
 
             stopTickerIfNoRunning()
-            stopForegroundService(instanceId)
 
-            // 위젯 업데이트 - 삭제 후 남은 타이머 확인
-            updateWidgetForActiveTimer()
+            // 상태 동기화 (알림, 위젯, 서비스)
+            if (_uiState.value.runningTimers.isEmpty()) {
+                timerStateSync.clearAll()
+            } else {
+                timerStateSync.syncTimers(_uiState.value.runningTimers)
+            }
         }
 
         /**
          * 완료된 타이머 확인 (알림 해제)
          */
         fun acknowledgeFinished(instanceId: String) {
+            // 소리/진동 중지
+            timerStateSync.stopFinishedAlarm(instanceId)
+
             _uiState.update { state ->
                 state.copy(
                     runningTimers =
@@ -272,6 +251,8 @@ class TimerViewModel
                         },
                 )
             }
+            // 상태 동기화 (알림, 위젯, 서비스)
+            timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
         /**
@@ -607,7 +588,6 @@ class TimerViewModel
 
         private fun updateRunningTimers() {
             val now = System.currentTimeMillis()
-            var hasFinished = false
 
             _uiState.update { state ->
                 state.copy(
@@ -616,7 +596,6 @@ class TimerViewModel
                             if (timer.state == TimerState.RUNNING) {
                                 val remaining = maxOf(0L, timer.targetEndTimeMillis - now)
                                 if (remaining <= 0) {
-                                    hasFinished = true
                                     timer.copy(
                                         remainingMillis = 0,
                                         state = TimerState.FINISHED,
@@ -631,20 +610,8 @@ class TimerViewModel
                 )
             }
 
-            // 위젯 업데이트
-            val activeTimer =
-                _uiState.value.runningTimers.firstOrNull {
-                    it.state == TimerState.RUNNING
-                }
-            if (activeTimer != null) {
-                TimerWidgetUpdater.onTimerTick(
-                    context = context,
-                    remainingMillis = activeTimer.remainingMillis,
-                )
-            } else if (hasFinished) {
-                // 타이머 완료 시 위젯 상태 초기화
-                TimerWidgetUpdater.onTimerStopped(context)
-            }
+            // 주기적 상태 동기화 (틱마다 알림/위젯 업데이트)
+            timerStateSync.syncTick(_uiState.value.runningTimers)
         }
 
         private fun stopTickerIfNoRunning() {
@@ -652,74 +619,6 @@ class TimerViewModel
                 tickerJob?.cancel()
                 tickerJob = null
             }
-        }
-
-        /**
-         * 현재 활성 타이머 상태에 따라 위젯 업데이트
-         * 실행 중인 타이머가 있으면 해당 타이머 표시, 없으면 대기 상태로 표시
-         */
-        private fun updateWidgetForActiveTimer() {
-            val activeTimer =
-                _uiState.value.runningTimers.firstOrNull {
-                    it.state == TimerState.RUNNING
-                }
-            val pausedTimer =
-                _uiState.value.runningTimers.firstOrNull {
-                    it.state == TimerState.PAUSED
-                }
-
-            when {
-                activeTimer != null -> {
-                    TimerWidgetUpdater.onTimerStarted(
-                        context = context,
-                        timerId = activeTimer.instanceId,
-                        timerName = activeTimer.name,
-                        remainingMillis = activeTimer.remainingMillis,
-                        totalMillis = activeTimer.totalDurationMillis,
-                    )
-                }
-                pausedTimer != null -> {
-                    TimerWidgetUpdater.onTimerPaused(
-                        context = context,
-                        remainingMillis = pausedTimer.remainingMillis,
-                    )
-                }
-                else -> {
-                    TimerWidgetUpdater.onTimerStopped(context)
-                }
-            }
-        }
-
-        /**
-         * Foreground Service 시작
-         */
-        private fun startForegroundService(timer: RunningTimer) {
-            val intent =
-                Intent(context, TimerForegroundService::class.java).apply {
-                    action = TimerForegroundService.ACTION_START_TIMER
-                    putExtra(TimerForegroundService.EXTRA_TIMER_ID, timer.instanceId)
-                    putExtra(TimerForegroundService.EXTRA_TIMER_NAME, timer.name)
-                    putExtra(TimerForegroundService.EXTRA_REMAINING_MILLIS, timer.remainingMillis)
-                    putExtra(TimerForegroundService.EXTRA_TARGET_END_TIME, timer.targetEndTimeMillis)
-                }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
-        }
-
-        /**
-         * Foreground Service 중지
-         */
-        private fun stopForegroundService(instanceId: String) {
-            val intent =
-                Intent(context, TimerForegroundService::class.java).apply {
-                    action = TimerForegroundService.ACTION_STOP_TIMER
-                    putExtra(TimerForegroundService.EXTRA_TIMER_ID, instanceId)
-                }
-            context.startService(intent)
         }
 
         private fun formatDuration(seconds: Long): String {
@@ -775,6 +674,7 @@ class TimerViewModel
             }
             tickerJob?.cancel()
             tickerJob = null
+            timerStateSync.clearAll()
         }
 
         @Deprecated("Use addOneMinute(instanceId) instead")

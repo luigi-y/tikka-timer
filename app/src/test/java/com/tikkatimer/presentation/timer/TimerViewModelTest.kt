@@ -6,6 +6,7 @@ import com.tikkatimer.domain.model.TimerState
 import com.tikkatimer.domain.usecase.timer.DeleteTimerPresetUseCase
 import com.tikkatimer.domain.usecase.timer.GetTimerPresetsUseCase
 import com.tikkatimer.domain.usecase.timer.SaveTimerPresetUseCase
+import com.tikkatimer.sync.TimerStateSync
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -33,12 +34,14 @@ class TimerViewModelTest {
     private lateinit var getTimerPresetsUseCase: GetTimerPresetsUseCase
     private lateinit var saveTimerPresetUseCase: SaveTimerPresetUseCase
     private lateinit var deleteTimerPresetUseCase: DeleteTimerPresetUseCase
+    private lateinit var timerStateSync: TimerStateSync
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
         mockContext = mockk(relaxed = true)
+        timerStateSync = mockk(relaxed = true)
 
         getTimerPresetsUseCase =
             mockk {
@@ -59,6 +62,7 @@ class TimerViewModelTest {
                 getTimerPresetsUseCase,
                 saveTimerPresetUseCase,
                 deleteTimerPresetUseCase,
+                timerStateSync,
             )
     }
 
@@ -225,6 +229,7 @@ class TimerViewModelTest {
                     getTimerPresetsUseCase,
                     saveTimerPresetUseCase,
                     deleteTimerPresetUseCase,
+                    timerStateSync,
                 )
 
             assertEquals(2, newViewModel.uiState.value.presets.size)
