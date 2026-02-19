@@ -72,11 +72,15 @@ class SettingsDataStore
 
         /**
          * 컬러 테마 저장
+         * 위젯에서 동기적으로 읽을 수 있도록 SharedPreferences에도 미러링
          */
         suspend fun setColorTheme(colorTheme: ColorTheme) {
             context.dataStore.edit { preferences ->
                 preferences[PreferencesKeys.COLOR_THEME] = colorTheme.name
             }
+            // 위젯용 동기 읽기 미러링
+            context.getSharedPreferences(WIDGET_SETTINGS_PREFS, Context.MODE_PRIVATE)
+                .edit().putString(KEY_COLOR_THEME, colorTheme.name).apply()
         }
 
         /**
@@ -95,5 +99,13 @@ class SettingsDataStore
             context.dataStore.edit { preferences ->
                 preferences.clear()
             }
+            // 위젯 SharedPreferences도 초기화
+            context.getSharedPreferences(WIDGET_SETTINGS_PREFS, Context.MODE_PRIVATE)
+                .edit().remove(KEY_COLOR_THEME).apply()
+        }
+
+        companion object {
+            const val WIDGET_SETTINGS_PREFS = "widget_settings"
+            const val KEY_COLOR_THEME = "color_theme"
         }
     }

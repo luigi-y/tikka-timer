@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 1x1 소형 타이머 위젯 - 아이콘 크기에 맞춤 -->
+<!-- 1x1 소형 타이머 위젯 - RemoteViews 기반 -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="48dp"
     android:minHeight="48dp"
@@ -11,7 +11,7 @@
     android:maxResizeHeight="72dp"
     android:resizeMode="none"
     android:widgetCategory="home_screen"
-    android:initialLayout="@layout/widget_timer_small_initial"
-    android:previewLayout="@layout/widget_timer_small_initial"
+    android:initialLayout="@layout/widget_timer_small"
+    android:previewLayout="@layout/widget_timer_small_preview"
     android:description="@string/widget_timer_small_description"
-    android:updatePeriodMillis="60000" />
+    android:updatePeriodMillis="0" />

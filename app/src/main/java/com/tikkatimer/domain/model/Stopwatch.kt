@@ -26,14 +26,20 @@ data class Stopwatch(
      */
     fun getFormattedTime(): String {
         return if (hours > 0) {
-            String.format("%02d:%02d:%02d.%02d", hours, minutes, seconds, milliseconds)
+            String.format(TIME_FORMAT_WITH_HOURS, hours, minutes, seconds, milliseconds)
         } else {
-            String.format("%02d:%02d.%02d", minutes, seconds, milliseconds)
+            String.format(TIME_FORMAT_WITHOUT_HOURS, minutes, seconds, milliseconds)
         }
     }
 
     companion object {
         val INITIAL = Stopwatch()
+
+        /** 시간 포맷: "HH:MM:SS.mm" */
+        private const val TIME_FORMAT_WITH_HOURS = "%02d:%02d:%02d.%02d"
+
+        /** 시간 포맷: "MM:SS.mm" */
+        const val TIME_FORMAT_WITHOUT_HOURS = "%02d:%02d.%02d"
     }
 }
 
@@ -64,7 +70,7 @@ data class LapTime(
         val minutes = (lapMillis / 60000).toInt()
         val seconds = ((lapMillis % 60000) / 1000).toInt()
         val millis = ((lapMillis % 1000) / 10).toInt()
-        return String.format("%02d:%02d.%02d", minutes, seconds, millis)
+        return String.format(Stopwatch.TIME_FORMAT_WITHOUT_HOURS, minutes, seconds, millis)
     }
 
     /**
@@ -77,9 +83,13 @@ data class LapTime(
         val millis = ((totalMillis % 1000) / 10).toInt()
 
         return if (hours > 0) {
-            String.format("%02d:%02d:%02d.%02d", hours, minutes, seconds, millis)
+            String.format(TIME_FORMAT_WITH_HOURS, hours, minutes, seconds, millis)
         } else {
-            String.format("%02d:%02d.%02d", minutes, seconds, millis)
+            String.format(Stopwatch.TIME_FORMAT_WITHOUT_HOURS, minutes, seconds, millis)
         }
+    }
+
+    companion object {
+        private const val TIME_FORMAT_WITH_HOURS = "%02d:%02d:%02d.%02d"
     }
 }

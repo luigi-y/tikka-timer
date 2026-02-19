@@ -7,6 +7,17 @@ import com.tikkatimer.domain.model.VibrationPattern
 import java.time.DayOfWeek
 import java.time.LocalTime
 
+/** 요일 비트마스크 상수 */
+private object DayBitmask {
+    const val SUNDAY = 1
+    const val MONDAY = 2
+    const val TUESDAY = 4
+    const val WEDNESDAY = 8
+    const val THURSDAY = 16
+    const val FRIDAY = 32
+    const val SATURDAY = 64
+}
+
 /**
  * AlarmEntity를 Alarm 도메인 모델로 변환
  */
@@ -50,13 +61,13 @@ fun Alarm.toEntity(): AlarmEntity {
  */
 private fun Int.toRepeatDaysSet(): Set<DayOfWeek> {
     val days = mutableSetOf<DayOfWeek>()
-    if (this and 1 != 0) days.add(DayOfWeek.SUNDAY)
-    if (this and 2 != 0) days.add(DayOfWeek.MONDAY)
-    if (this and 4 != 0) days.add(DayOfWeek.TUESDAY)
-    if (this and 8 != 0) days.add(DayOfWeek.WEDNESDAY)
-    if (this and 16 != 0) days.add(DayOfWeek.THURSDAY)
-    if (this and 32 != 0) days.add(DayOfWeek.FRIDAY)
-    if (this and 64 != 0) days.add(DayOfWeek.SATURDAY)
+    if (this and DayBitmask.SUNDAY != 0) days.add(DayOfWeek.SUNDAY)
+    if (this and DayBitmask.MONDAY != 0) days.add(DayOfWeek.MONDAY)
+    if (this and DayBitmask.TUESDAY != 0) days.add(DayOfWeek.TUESDAY)
+    if (this and DayBitmask.WEDNESDAY != 0) days.add(DayOfWeek.WEDNESDAY)
+    if (this and DayBitmask.THURSDAY != 0) days.add(DayOfWeek.THURSDAY)
+    if (this and DayBitmask.FRIDAY != 0) days.add(DayOfWeek.FRIDAY)
+    if (this and DayBitmask.SATURDAY != 0) days.add(DayOfWeek.SATURDAY)
     return days
 }
 
@@ -65,12 +76,12 @@ private fun Int.toRepeatDaysSet(): Set<DayOfWeek> {
  */
 private fun Set<DayOfWeek>.toBitmask(): Int {
     var bitmask = 0
-    if (DayOfWeek.SUNDAY in this) bitmask = bitmask or 1
-    if (DayOfWeek.MONDAY in this) bitmask = bitmask or 2
-    if (DayOfWeek.TUESDAY in this) bitmask = bitmask or 4
-    if (DayOfWeek.WEDNESDAY in this) bitmask = bitmask or 8
-    if (DayOfWeek.THURSDAY in this) bitmask = bitmask or 16
-    if (DayOfWeek.FRIDAY in this) bitmask = bitmask or 32
-    if (DayOfWeek.SATURDAY in this) bitmask = bitmask or 64
+    if (DayOfWeek.SUNDAY in this) bitmask = bitmask or DayBitmask.SUNDAY
+    if (DayOfWeek.MONDAY in this) bitmask = bitmask or DayBitmask.MONDAY
+    if (DayOfWeek.TUESDAY in this) bitmask = bitmask or DayBitmask.TUESDAY
+    if (DayOfWeek.WEDNESDAY in this) bitmask = bitmask or DayBitmask.WEDNESDAY
+    if (DayOfWeek.THURSDAY in this) bitmask = bitmask or DayBitmask.THURSDAY
+    if (DayOfWeek.FRIDAY in this) bitmask = bitmask or DayBitmask.FRIDAY
+    if (DayOfWeek.SATURDAY in this) bitmask = bitmask or DayBitmask.SATURDAY
     return bitmask
 }

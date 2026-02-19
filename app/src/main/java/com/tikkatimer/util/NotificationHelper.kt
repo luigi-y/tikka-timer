@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.tikkatimer.MainActivity
 import com.tikkatimer.R
 import com.tikkatimer.presentation.alarm.AlarmRingingActivity
 import com.tikkatimer.service.AlarmRingingService
@@ -160,21 +161,26 @@ class NotificationHelper
 
         /**
          * 타이머/스톱워치 Foreground Service 알림 생성
+         * 클릭 시 타이머 탭으로 이동
          */
         fun buildForegroundNotification(
             title: String,
             content: String,
         ): NotificationCompat.Builder {
-            val packageManager = context.packageManager
-            val launchIntent =
-                packageManager.getLaunchIntentForPackage(context.packageName)
-                    ?: Intent()
+            // 타이머 탭으로 이동하는 Intent
+            val timerIntent =
+                Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    putExtra(MainActivity.EXTRA_NAVIGATE_TO_TIMER, true)
+                }
 
             val pendingIntent =
                 PendingIntent.getActivity(
                     context,
                     0,
-                    launchIntent,
+                    timerIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
 

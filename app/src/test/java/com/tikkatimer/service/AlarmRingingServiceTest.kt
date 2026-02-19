@@ -204,8 +204,8 @@ class AlarmRingingServiceTest {
 
             try {
                 alarmSoundManager.startAlarmSound(SoundType.DEFAULT, null)
-            } catch (e: Exception) {
-                // 예외 발생
+            } catch (expected: RuntimeException) {
+                // 예상된 예외 - 소리 시작 실패
             }
 
             // 진동은 독립적으로 시작 가능해야 함
@@ -224,8 +224,8 @@ class AlarmRingingServiceTest {
 
             try {
                 alarmSoundManager.startVibration(VibrationPattern.DEFAULT)
-            } catch (e: Exception) {
-                // 예외 발생
+            } catch (expected: RuntimeException) {
+                // 예상된 예외 - 진동 시작 실패
             }
         }
 

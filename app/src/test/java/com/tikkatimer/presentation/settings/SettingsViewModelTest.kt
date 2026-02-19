@@ -1,5 +1,6 @@
 package com.tikkatimer.presentation.settings
 
+import android.content.Context
 import com.tikkatimer.data.local.SettingsDataStore
 import com.tikkatimer.domain.model.AppLanguage
 import com.tikkatimer.domain.model.AppSettings
@@ -28,11 +29,14 @@ import org.junit.Test
 class SettingsViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var settingsDataStore: SettingsDataStore
+    private lateinit var mockContext: Context
     private lateinit var viewModel: SettingsViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+
+        mockContext = mockk(relaxed = true)
 
         settingsDataStore =
             mockk {
@@ -43,7 +47,7 @@ class SettingsViewModelTest {
                 coEvery { resetSettings() } returns Unit
             }
 
-        viewModel = SettingsViewModel(settingsDataStore)
+        viewModel = SettingsViewModel(settingsDataStore, mockContext)
     }
 
     @After

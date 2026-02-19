@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.glance.appwidget.updateAll
 import com.tikkatimer.domain.model.RunningTimer
 import com.tikkatimer.domain.model.SoundType
 import com.tikkatimer.domain.model.TimerState
@@ -12,7 +11,7 @@ import com.tikkatimer.domain.model.VibrationPattern
 import com.tikkatimer.service.TimerForegroundService
 import com.tikkatimer.util.AlarmSoundManager
 import com.tikkatimer.util.NotificationHelper
-import com.tikkatimer.widget.TimerWidgetSmall
+import com.tikkatimer.widget.TimerWidgetProvider
 import com.tikkatimer.widget.TimerWidgetStateManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -171,6 +170,33 @@ class TimerStateSync
         }
 
         /**
+         * 현재 동기화된 타이머 상태 반환
+         * ViewModel 초기화 시 상태 복원에 사용
+         */
+        fun getRestoredTimers(): List<RunningTimer> {
+            return _currentTimers.value.map { synced ->
+                RunningTimer(
+                    instanceId = synced.instanceId,
+                    presetId = 0,
+                    name = synced.name,
+                    totalDurationMillis = synced.totalMillis,
+                    remainingMillis = synced.remainingMillis,
+                    state = synced.state,
+                    soundType = synced.soundType,
+                    vibrationPattern = synced.vibrationPattern,
+                    targetEndTimeMillis = synced.targetEndTimeMillis,
+                )
+            }
+        }
+
+        /**
+         * 실행 중인 타이머 존재 여부
+         */
+        fun hasRunningTimers(): Boolean {
+            return _currentTimers.value.any { it.state == TimerState.RUNNING }
+        }
+
+        /**
          * 모든 타이머 중지 및 정리
          */
         fun clearAll() {
@@ -192,13 +218,29 @@ class TimerStateSync
         }
 
         /**
+         * 현재 타이머 상태를 위젯에 동기화
+         * 앱이 포그라운드로 돌아오거나 탭 이동 시 호출
+         */
+        suspend fun syncCurrentStateToWidget() {
+            Log.d(TAG, "Syncing current state to widget")
+            updateWidgetState(_currentTimers.value)
+        }
+
+        /**
          * 위젯 상태 업데이트
          */
         private suspend fun updateWidgetState(timers: List<SyncedTimerState>) {
+            val finishedTimer = timers.firstOrNull { it.state == TimerState.FINISHED }
             val activeTimer = timers.firstOrNull { it.state == TimerState.RUNNING }
             val pausedTimer = timers.firstOrNull { it.state == TimerState.PAUSED }
 
             when {
+                finishedTimer != null -> {
+                    TimerWidgetStateManager.setFinished(
+                        context = context,
+                        timerName = finishedTimer.name,
+                    )
+                }
                 activeTimer != null -> {
                     TimerWidgetStateManager.setRunning(
                         context = context,
@@ -225,11 +267,13 @@ class TimerStateSync
 
         /**
          * 위젯 업데이트
+         * RemoteViews 기반 TimerWidgetProvider 사용
          */
-        private suspend fun updateWidgets() {
+        private fun updateWidgets() {
             try {
-                TimerWidgetSmall().updateAll(context)
-            } catch (ignored: Exception) {
+                TimerWidgetProvider.updateAllWidgets(context)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to update widgets", e)
             }
         }
 

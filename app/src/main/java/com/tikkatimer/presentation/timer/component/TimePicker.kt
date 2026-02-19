@@ -48,7 +48,7 @@ fun TimePicker(
         // 시간
         TimeSpinner(
             value = hours,
-            label = "시간",
+            label = stringResource(R.string.timer_hours),
             maxValue = 23,
             onValueChange = onHoursChange,
         )
@@ -58,7 +58,7 @@ fun TimePicker(
         // 분
         TimeSpinner(
             value = minutes,
-            label = "분",
+            label = stringResource(R.string.timer_minutes),
             maxValue = 59,
             onValueChange = onMinutesChange,
         )
@@ -68,7 +68,7 @@ fun TimePicker(
         // 초
         TimeSpinner(
             value = seconds,
-            label = "초",
+            label = stringResource(R.string.timer_seconds),
             maxValue = 59,
             onValueChange = onSecondsChange,
         )

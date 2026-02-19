@@ -1,6 +1,7 @@
 package com.tikkatimer.presentation.timer
 
 import android.content.Context
+import com.tikkatimer.data.local.dao.RunningTimerDao
 import com.tikkatimer.domain.model.TimerPreset
 import com.tikkatimer.domain.model.TimerState
 import com.tikkatimer.domain.usecase.timer.DeleteTimerPresetUseCase
@@ -35,6 +36,7 @@ class TimerViewModelTest {
     private lateinit var saveTimerPresetUseCase: SaveTimerPresetUseCase
     private lateinit var deleteTimerPresetUseCase: DeleteTimerPresetUseCase
     private lateinit var timerStateSync: TimerStateSync
+    private lateinit var runningTimerDao: RunningTimerDao
 
     @Before
     fun setup() {
@@ -42,6 +44,7 @@ class TimerViewModelTest {
 
         mockContext = mockk(relaxed = true)
         timerStateSync = mockk(relaxed = true)
+        runningTimerDao = mockk(relaxed = true)
 
         getTimerPresetsUseCase =
             mockk {
@@ -63,6 +66,7 @@ class TimerViewModelTest {
                 saveTimerPresetUseCase,
                 deleteTimerPresetUseCase,
                 timerStateSync,
+                runningTimerDao,
             )
     }
 
@@ -230,6 +234,7 @@ class TimerViewModelTest {
                     saveTimerPresetUseCase,
                     deleteTimerPresetUseCase,
                     timerStateSync,
+                    runningTimerDao,
                 )
 
             assertEquals(2, newViewModel.uiState.value.presets.size)

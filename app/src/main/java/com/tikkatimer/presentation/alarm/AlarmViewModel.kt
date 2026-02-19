@@ -69,7 +69,7 @@ class AlarmViewModel
                 currentState.copy(
                     dialogState =
                         AlarmDialogState.Add(
-                            time = LocalTime.of(8, 0),
+                            time = LocalTime.of(DEFAULT_ALARM_HOUR, 0),
                             label = "",
                             repeatDays = emptySet(),
                             soundType = SoundType.DEFAULT,
@@ -320,3 +320,5 @@ sealed class AlarmDialogState {
         val isSnoozeEnabled: Boolean,
     ) : AlarmDialogState()
 }
+
+private const val DEFAULT_ALARM_HOUR = 8

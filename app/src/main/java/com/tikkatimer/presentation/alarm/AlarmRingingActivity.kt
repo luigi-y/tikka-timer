@@ -172,8 +172,8 @@ class AlarmRingingActivity : ComponentActivity() {
         super.onDestroy()
         try {
             unregisterReceiver(dismissReceiver)
-        } catch (e: Exception) {
-            // Already unregistered
+        } catch (ignored: IllegalArgumentException) {
+            // Receiver was already unregistered - safe to ignore
         }
     }
 

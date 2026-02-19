@@ -44,7 +44,7 @@ data class Alarm(
         val weekend = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
 
         return when {
-            repeatDays.size == 7 -> "매일"
+            repeatDays.size == DAYS_IN_WEEK -> "매일"
             repeatDays == weekdays -> "평일"
             repeatDays == weekend -> "주말"
             else ->
@@ -128,3 +128,5 @@ fun DayOfWeek.toKoreanShort(): String =
         DayOfWeek.SATURDAY -> "토"
         DayOfWeek.SUNDAY -> "일"
     }
+
+private const val DAYS_IN_WEEK = 7

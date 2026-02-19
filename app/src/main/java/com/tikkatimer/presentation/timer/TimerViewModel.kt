@@ -1,8 +1,11 @@
 package com.tikkatimer.presentation.timer
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tikkatimer.data.local.dao.RunningTimerDao
+import com.tikkatimer.data.mapper.RunningTimerMapper
 import com.tikkatimer.domain.model.RunningTimer
 import com.tikkatimer.domain.model.SoundType
 import com.tikkatimer.domain.model.TimerPreset
@@ -12,6 +15,7 @@ import com.tikkatimer.domain.usecase.timer.DeleteTimerPresetUseCase
 import com.tikkatimer.domain.usecase.timer.GetTimerPresetsUseCase
 import com.tikkatimer.domain.usecase.timer.SaveTimerPresetUseCase
 import com.tikkatimer.sync.TimerStateSync
+import com.tikkatimer.widget.TimerWidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -37,6 +41,7 @@ class TimerViewModel
         private val saveTimerPresetUseCase: SaveTimerPresetUseCase,
         private val deleteTimerPresetUseCase: DeleteTimerPresetUseCase,
         private val timerStateSync: TimerStateSync,
+        private val runningTimerDao: RunningTimerDao,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(TimerUiState())
         val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
@@ -44,12 +49,118 @@ class TimerViewModel
         private var tickerJob: Job? = null
 
         companion object {
+            private const val TAG = "TimerViewModel"
             private const val TICK_INTERVAL_MS = 1000L
             private const val DEFAULT_TIMER_MINUTES = 5
         }
 
         init {
             loadPresets()
+            restoreTimersFromDb()
+        }
+
+        /**
+         * Room DB에서 실행 중인 타이머 상태 복원
+         * 앱 강제 종료 후에도 타이머 정보 유지
+         */
+        private fun restoreTimersFromDb() {
+            viewModelScope.launch {
+                try {
+                    val entities = runningTimerDao.getAllTimersSync()
+                    if (entities.isNotEmpty()) {
+                        val now = System.currentTimeMillis()
+                        val restoredTimers =
+                            RunningTimerMapper.toDomainList(entities).map { timer ->
+                                // RUNNING 상태인데 종료 시간이 지났으면 FINISHED로 변경
+                                if (timer.state == TimerState.RUNNING && timer.targetEndTimeMillis > 0) {
+                                    if (now >= timer.targetEndTimeMillis) {
+                                        timer.copy(
+                                            remainingMillis = 0L,
+                                            state = TimerState.FINISHED,
+                                        )
+                                    } else {
+                                        // 남은 시간 재계산
+                                        timer.copy(
+                                            remainingMillis = timer.targetEndTimeMillis - now,
+                                        )
+                                    }
+                                } else {
+                                    timer
+                                }
+                            }
+
+                        _uiState.update { state ->
+                            state.copy(runningTimers = restoredTimers)
+                        }
+
+                        // DB 업데이트 (FINISHED로 변경된 타이머 반영)
+                        saveTimersToDb(restoredTimers)
+
+                        // 실행 중인 타이머가 있으면 ticker 시작
+                        if (restoredTimers.any { it.state == TimerState.RUNNING }) {
+                            ensureTickerRunning()
+                        }
+
+                        // 위젯 동기화
+                        val runningTimer = restoredTimers.firstOrNull { it.state == TimerState.RUNNING }
+                        if (runningTimer != null) {
+                            TimerWidgetUpdater.onTimerStarted(
+                                context = context,
+                                timerId = runningTimer.instanceId,
+                                timerName = runningTimer.name,
+                                remainingMillis = runningTimer.remainingMillis,
+                                totalMillis = runningTimer.totalDurationMillis,
+                            )
+                        }
+
+                        Log.d(TAG, "Restored ${restoredTimers.size} timers from DB")
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to restore timers from DB", e)
+                }
+            }
+        }
+
+        /**
+         * 실행 중인 타이머들을 DB에 저장
+         */
+        private fun saveTimersToDb(timers: List<RunningTimer>) {
+            viewModelScope.launch {
+                try {
+                    val entities = RunningTimerMapper.toEntityList(timers)
+                    runningTimerDao.deleteAll()
+                    runningTimerDao.upsertAll(entities)
+                    Log.d(TAG, "Saved ${timers.size} timers to DB")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to save timers to DB", e)
+                }
+            }
+        }
+
+        /**
+         * 단일 타이머를 DB에 저장/업데이트
+         */
+        private fun saveTimerToDb(timer: RunningTimer) {
+            viewModelScope.launch {
+                try {
+                    runningTimerDao.upsert(RunningTimerMapper.toEntity(timer))
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to save timer to DB", e)
+                }
+            }
+        }
+
+        /**
+         * DB에서 타이머 삭제
+         */
+        private fun deleteTimerFromDb(instanceId: String) {
+            viewModelScope.launch {
+                try {
+                    runningTimerDao.delete(instanceId)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to delete timer from DB", e)
+                }
+            }
         }
 
         private fun loadPresets() {
@@ -80,8 +191,18 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트
+            TimerWidgetUpdater.onTimerStarted(
+                context = context,
+                timerId = runningTimer.instanceId,
+                timerName = runningTimer.name,
+                remainingMillis = runningTimer.remainingMillis,
+                totalMillis = runningTimer.totalDurationMillis,
+            )
+            // 상태 동기화 (알림, 서비스)
             timerStateSync.syncTimers(_uiState.value.runningTimers)
+            // DB 저장
+            saveTimerToDb(runningTimer)
         }
 
         /**
@@ -122,8 +243,18 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트
+            TimerWidgetUpdater.onTimerStarted(
+                context = context,
+                timerId = runningTimer.instanceId,
+                timerName = runningTimer.name,
+                remainingMillis = runningTimer.remainingMillis,
+                totalMillis = runningTimer.totalDurationMillis,
+            )
+            // 상태 동기화 (알림, 서비스)
             timerStateSync.syncTimers(_uiState.value.runningTimers)
+            // DB 저장
+            saveTimerToDb(runningTimer)
         }
 
         /**
@@ -149,7 +280,14 @@ class TimerViewModel
             }
 
             stopTickerIfNoRunning()
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트 (일시정지 상태)
+            val pausedTimer = _uiState.value.runningTimers.find { it.instanceId == instanceId }
+            pausedTimer?.let {
+                TimerWidgetUpdater.onTimerPaused(context, it.remainingMillis)
+                // DB 저장
+                saveTimerToDb(it)
+            }
+            // 상태 동기화 (알림, 서비스)
             timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
@@ -176,7 +314,20 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트 (재개 상태)
+            val resumedTimer = _uiState.value.runningTimers.find { it.instanceId == instanceId }
+            resumedTimer?.let {
+                TimerWidgetUpdater.onTimerResumed(
+                    context = context,
+                    timerId = it.instanceId,
+                    timerName = it.name,
+                    remainingMillis = it.remainingMillis,
+                    totalMillis = it.totalDurationMillis,
+                )
+                // DB 저장
+                saveTimerToDb(it)
+            }
+            // 상태 동기화 (알림, 서비스)
             timerStateSync.syncTimers(_uiState.value.runningTimers)
         }
 
@@ -202,8 +353,13 @@ class TimerViewModel
             }
 
             stopTickerIfNoRunning()
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트 (리셋/정지 상태)
+            TimerWidgetUpdater.onTimerStopped(context)
+            // 상태 동기화 (알림, 서비스)
             timerStateSync.syncTimers(_uiState.value.runningTimers)
+            // DB 저장
+            val resetTimer = _uiState.value.runningTimers.find { it.instanceId == instanceId }
+            resetTimer?.let { saveTimerToDb(it) }
         }
 
         /**
@@ -218,12 +374,28 @@ class TimerViewModel
 
             stopTickerIfNoRunning()
 
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트
             if (_uiState.value.runningTimers.isEmpty()) {
+                TimerWidgetUpdater.onTimerStopped(context)
                 timerStateSync.clearAll()
             } else {
+                // 다른 실행 중인 타이머가 있으면 해당 타이머로 위젯 업데이트
+                val nextTimer = _uiState.value.runningTimers.firstOrNull { it.state == TimerState.RUNNING }
+                if (nextTimer != null) {
+                    TimerWidgetUpdater.onTimerStarted(
+                        context = context,
+                        timerId = nextTimer.instanceId,
+                        timerName = nextTimer.name,
+                        remainingMillis = nextTimer.remainingMillis,
+                        totalMillis = nextTimer.totalDurationMillis,
+                    )
+                } else {
+                    TimerWidgetUpdater.onTimerStopped(context)
+                }
                 timerStateSync.syncTimers(_uiState.value.runningTimers)
             }
+            // DB에서 삭제
+            deleteTimerFromDb(instanceId)
         }
 
         /**
@@ -249,8 +421,16 @@ class TimerViewModel
                         },
                 )
             }
-            // 상태 동기화 (알림, 위젯, 서비스)
+            // 위젯 즉시 업데이트 (완료 확인 후 idle 상태로)
+            val hasRunningTimer = _uiState.value.runningTimers.any { it.state == TimerState.RUNNING }
+            if (!hasRunningTimer) {
+                TimerWidgetUpdater.onTimerStopped(context)
+            }
+            // 상태 동기화 (알림, 서비스)
             timerStateSync.syncTimers(_uiState.value.runningTimers)
+            // DB 저장
+            val acknowledgedTimer = _uiState.value.runningTimers.find { it.instanceId == instanceId }
+            acknowledgedTimer?.let { saveTimerToDb(it) }
         }
 
         /**
@@ -284,6 +464,9 @@ class TimerViewModel
                         },
                 )
             }
+            // DB 저장
+            val updatedTimer = _uiState.value.runningTimers.find { it.instanceId == instanceId }
+            updatedTimer?.let { saveTimerToDb(it) }
         }
 
         /**
@@ -507,6 +690,9 @@ class TimerViewModel
                     editingTimerName = "",
                 )
             }
+            // DB 저장
+            val editedTimer = _uiState.value.runningTimers.find { it.instanceId == editingId }
+            editedTimer?.let { saveTimerToDb(it) }
         }
 
         /**
@@ -562,6 +748,9 @@ class TimerViewModel
             }
 
             ensureTickerRunning()
+            // DB 저장
+            val startedTimer = _uiState.value.runningTimers.find { it.instanceId == editingId }
+            startedTimer?.let { saveTimerToDb(it) }
         }
 
         /**
@@ -673,6 +862,14 @@ class TimerViewModel
             tickerJob?.cancel()
             tickerJob = null
             timerStateSync.clearAll()
+            // DB 전체 삭제
+            viewModelScope.launch {
+                try {
+                    runningTimerDao.deleteAll()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to delete all timers from DB", e)
+                }
+            }
         }
 
         @Deprecated("Use addOneMinute(instanceId) instead")

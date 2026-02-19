@@ -66,36 +66,9 @@ fun AlarmDialog(
     val isEdit = dialogState is AlarmDialogState.Edit
     val title = stringResource(if (isEdit) R.string.alarm_edit else R.string.alarm_add)
 
-    val time =
-        when (dialogState) {
-            is AlarmDialogState.Add -> dialogState.time
-            is AlarmDialogState.Edit -> dialogState.time
-        }
-    val label =
-        when (dialogState) {
-            is AlarmDialogState.Add -> dialogState.label
-            is AlarmDialogState.Edit -> dialogState.label
-        }
-    val repeatDays =
-        when (dialogState) {
-            is AlarmDialogState.Add -> dialogState.repeatDays
-            is AlarmDialogState.Edit -> dialogState.repeatDays
-        }
-    val soundType =
-        when (dialogState) {
-            is AlarmDialogState.Add -> dialogState.soundType
-            is AlarmDialogState.Edit -> dialogState.soundType
-        }
-    val vibrationPattern =
-        when (dialogState) {
-            is AlarmDialogState.Add -> dialogState.vibrationPattern
-            is AlarmDialogState.Edit -> dialogState.vibrationPattern
-        }
-    val isSnoozeEnabled =
-        when (dialogState) {
-            is AlarmDialogState.Add -> dialogState.isSnoozeEnabled
-            is AlarmDialogState.Edit -> dialogState.isSnoozeEnabled
-        }
+    // dialogState에서 공통 속성 추출
+    val (time, label, repeatDays, soundType, vibrationPattern, isSnoozeEnabled) =
+        extractDialogProperties(dialogState)
 
     var showSoundPicker by remember { mutableStateOf(false) }
     var showVibrationPicker by remember { mutableStateOf(false) }
@@ -345,6 +318,41 @@ private fun getDayOfWeekShort(day: DayOfWeek): String {
         DayOfWeek.SUNDAY -> stringResource(R.string.day_sun)
     }
 }
+
+/**
+ * AlarmDialogState에서 공통 속성을 추출하는 헬퍼 함수
+ * Cognitive Complexity를 줄이기 위해 when 분기를 하나로 통합
+ */
+private data class DialogProperties(
+    val time: LocalTime,
+    val label: String,
+    val repeatDays: Set<DayOfWeek>,
+    val soundType: SoundType,
+    val vibrationPattern: VibrationPattern,
+    val isSnoozeEnabled: Boolean,
+)
+
+private fun extractDialogProperties(dialogState: AlarmDialogState): DialogProperties =
+    when (dialogState) {
+        is AlarmDialogState.Add ->
+            DialogProperties(
+                time = dialogState.time,
+                label = dialogState.label,
+                repeatDays = dialogState.repeatDays,
+                soundType = dialogState.soundType,
+                vibrationPattern = dialogState.vibrationPattern,
+                isSnoozeEnabled = dialogState.isSnoozeEnabled,
+            )
+        is AlarmDialogState.Edit ->
+            DialogProperties(
+                time = dialogState.time,
+                label = dialogState.label,
+                repeatDays = dialogState.repeatDays,
+                soundType = dialogState.soundType,
+                vibrationPattern = dialogState.vibrationPattern,
+                isSnoozeEnabled = dialogState.isSnoozeEnabled,
+            )
+    }
 
 @Preview
 @Composable

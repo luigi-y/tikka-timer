@@ -6,8 +6,10 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.tikkatimer.data.local.dao.AlarmDao
+import com.tikkatimer.data.local.dao.RunningTimerDao
 import com.tikkatimer.data.local.dao.TimerPresetDao
 import com.tikkatimer.data.local.entity.AlarmEntity
+import com.tikkatimer.data.local.entity.RunningTimerEntity
 import com.tikkatimer.data.local.entity.TimerPresetEntity
 
 /**
@@ -18,14 +20,17 @@ import com.tikkatimer.data.local.entity.TimerPresetEntity
     entities = [
         AlarmEntity::class,
         TimerPresetEntity::class,
+        RunningTimerEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun alarmDao(): AlarmDao
 
     abstract fun timerPresetDao(): TimerPresetDao
+
+    abstract fun runningTimerDao(): RunningTimerDao
 
     companion object {
         const val DATABASE_NAME = "tikka_timer_db"
@@ -142,12 +147,37 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
 
-        // 향후 마이그레이션 예시 (v2 -> v3)
-        // val MIGRATION_2_3 = object : Migration(2, 3) { ... }
+        /**
+         * Migration v2 -> v3
+         * - running_timers 테이블 추가
+         */
+        val MIGRATION_2_3 =
+            object : Migration(2, 3) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    Log.d(TAG, "Starting migration from v2 to v3")
+                    db.execSQL(
+                        """
+                        CREATE TABLE IF NOT EXISTS running_timers (
+                            instanceId TEXT PRIMARY KEY NOT NULL,
+                            presetId INTEGER NOT NULL DEFAULT 0,
+                            name TEXT NOT NULL,
+                            totalDurationMillis INTEGER NOT NULL,
+                            remainingMillis INTEGER NOT NULL,
+                            state TEXT NOT NULL,
+                            targetEndTimeMillis INTEGER NOT NULL,
+                            soundType TEXT NOT NULL DEFAULT 'DEFAULT',
+                            vibrationPattern TEXT NOT NULL DEFAULT 'DEFAULT',
+                            createdAt INTEGER NOT NULL
+                        )
+                        """.trimIndent(),
+                    )
+                    Log.d(TAG, "Migration v2 -> v3 completed successfully")
+                }
+            }
 
         /**
          * 모든 마이그레이션 목록 (순차 적용용)
          */
-        val ALL_MIGRATIONS = arrayOf(MIGRATION_1_2)
+        val ALL_MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
     }
 }

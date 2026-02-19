@@ -14,30 +14,68 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.tikkatimer.presentation.alarm.AlarmScreen
 import com.tikkatimer.presentation.settings.SettingsScreen
 import com.tikkatimer.presentation.stopwatch.StopwatchScreen
+import com.tikkatimer.presentation.stopwatch.StopwatchViewModel
 import com.tikkatimer.presentation.timer.TimerScreen
+import com.tikkatimer.presentation.timer.TimerViewModel
+import com.tikkatimer.sync.TimerStateSync
 import com.tikkatimer.ui.theme.TikkaTimerTheme
 import kotlinx.coroutines.launch
 
 /**
  * 메인 화면
  * 상단 탭을 통해 알람/타이머/스톱워치/설정 화면 전환
+ *
+ * @param initialTab 초기 탭 인덱스 (null이면 기본값 0)
+ * @param timerStateSync 위젯 상태 동기화용 (탭 이동 시 동기화)
+ * @param navigateToTimer 외부에서 타이머 탭 이동 요청 (위젯/알림 클릭 시)
+ * @param onNavigateToTimerHandled 타이머 탭 이동 처리 완료 콜백
  */
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    initialTab: Int? = null,
+    timerStateSync: TimerStateSync? = null,
+    navigateToTimer: Boolean = false,
+    onNavigateToTimerHandled: () -> Unit = {},
+) {
     val tabs = MainTab.entries
     val pagerState =
         rememberPagerState(
-            initialPage = 0,
+            initialPage = initialTab ?: 0,
             pageCount = { tabs.size },
         )
     val coroutineScope = rememberCoroutineScope()
+
+    // 탭 변경 시 위젯 상태 동기화
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect {
+            timerStateSync?.syncCurrentStateToWidget()
+        }
+    }
+
+    // 외부에서 타이머 탭 이동 요청 처리 (위젯/알림 클릭 시)
+    LaunchedEffect(navigateToTimer) {
+        if (navigateToTimer) {
+            pagerState.animateScrollToPage(MainTab.TIMER.ordinal)
+            onNavigateToTimerHandled()
+        }
+    }
+
+    // Activity 스코프에서 ViewModel을 미리 생성하여 탭 이동 시에도 상태 유지
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
+    val timerViewModel: TimerViewModel = hiltViewModel(viewModelStoreOwner)
+    val stopwatchViewModel: StopwatchViewModel = hiltViewModel(viewModelStoreOwner)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -87,8 +125,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
             ) { page ->
                 when (MainTab.fromIndex(page)) {
                     MainTab.ALARM -> AlarmScreen()
-                    MainTab.TIMER -> TimerScreen()
-                    MainTab.STOPWATCH -> StopwatchScreen()
+                    MainTab.TIMER -> TimerScreen(viewModel = timerViewModel)
+                    MainTab.STOPWATCH -> StopwatchScreen(viewModel = stopwatchViewModel)
                     MainTab.SETTINGS -> SettingsScreen()
                 }
             }

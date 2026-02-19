@@ -181,7 +181,6 @@ private fun SettingsScreenContent(
             title = stringResource(R.string.settings_reset),
             subtitle = "",
             onClick = { showResetDialog = true },
-            showChevron = false,
         )
 
         HorizontalDivider()
@@ -304,7 +303,6 @@ private fun SettingsItem(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
-    showChevron: Boolean = true,
 ) {
     ListItem(
         headlineContent = { Text(title) },

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="16dp" />
+    <!-- Purple 테마 기반 연한 배경색 (약간 어두움) -->
+    <solid android:color="#D1C4E9" />
+</shape>

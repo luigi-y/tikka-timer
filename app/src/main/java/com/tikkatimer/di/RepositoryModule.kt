@@ -16,12 +16,12 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+interface RepositoryModule {
     @Binds
     @Singleton
-    abstract fun bindAlarmRepository(alarmRepositoryImpl: AlarmRepositoryImpl): AlarmRepository
+    fun bindAlarmRepository(alarmRepositoryImpl: AlarmRepositoryImpl): AlarmRepository
 
     @Binds
     @Singleton
-    abstract fun bindTimerRepository(timerRepositoryImpl: TimerRepositoryImpl): TimerRepository
+    fun bindTimerRepository(timerRepositoryImpl: TimerRepositoryImpl): TimerRepository
 }

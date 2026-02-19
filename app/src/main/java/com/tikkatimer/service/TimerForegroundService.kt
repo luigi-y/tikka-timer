@@ -358,6 +358,12 @@ class TimerForegroundService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+
+        // 서비스 종료 시 위젯을 idle 상태로 초기화
+        if (isTimerRunning) {
+            TimerWidgetUpdater.onTimerStopped(this)
+        }
+
         Log.d(TAG, "Service destroyed")
     }
 }

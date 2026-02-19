@@ -81,13 +81,15 @@
             </intent-filter>
         </receiver>
 
-        <!-- 타이머 위젯 (1x1) -->
+        <!-- 타이머 위젯 (1x1) - RemoteViews 기반 -->
         <receiver
-            android:name=".widget.TimerWidgetSmallReceiver"
+            android:name=".widget.TimerWidgetProvider"
             android:exported="true"
             android:label="@string/widget_timer_small_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.tikkatimer.ACTION_WIDGET_CLICK" />
+                <action android:name="com.tikkatimer.ACTION_TIMER_FINISHED" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

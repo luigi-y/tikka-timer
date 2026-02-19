@@ -110,12 +110,33 @@ Conventional Commits 형식:
 # 빌드
 ./gradlew assembleDebug
 
-# 린트 검사
+# 코드 포맷팅 검사 (ktlint)
 ./gradlew ktlintCheck
 
-# 린트 자동 수정
+# 코드 포맷팅 자동 수정 (ktlint)
 ./gradlew ktlintFormat
+
+# 정적 분석 (Detekt) - 코드 품질, 복잡도, 잠재적 버그 검사
+./gradlew detekt
+
+# Android Lint - 보안, 성능, 접근성, 호환성 검사
+./gradlew lintDebug
+
+# 전체 코드 품질 검사 (ktlint + detekt + lint)
+./gradlew ktlintCheck detekt lintDebug
 ```
+
+### 코드 품질 도구 설명
+| 도구 | 검사 항목 | 설정 파일 |
+|------|----------|----------|
+| **ktlint** | 코드 포맷팅, 스타일 | `.editorconfig` |
+| **Detekt** | 코드 복잡도, 잠재적 버그, 코드 스멜 | `config/detekt/detekt.yml` |
+| **Android Lint** | 보안, 성능, 접근성, API 호환성 | `app/lint.xml` |
+
+### 리포트 위치
+- Detekt: `app/build/reports/detekt/`
+- Android Lint: `app/build/reports/lint/`
+- JaCoCo: `app/build/reports/jacoco/test/`
 
 ## 참고 문서
 - `/docs/PROJECT_PLAN.md` - 프로젝트 계획서

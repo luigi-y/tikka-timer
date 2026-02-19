@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.tikkatimer.data.local.AppDatabase
 import com.tikkatimer.data.local.dao.AlarmDao
+import com.tikkatimer.data.local.dao.RunningTimerDao
 import com.tikkatimer.data.local.dao.TimerPresetDao
 import dagger.Module
 import dagger.Provides
@@ -45,5 +46,11 @@ object DatabaseModule {
     @Singleton
     fun provideTimerPresetDao(database: AppDatabase): TimerPresetDao {
         return database.timerPresetDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRunningTimerDao(database: AppDatabase): RunningTimerDao {
+        return database.runningTimerDao()
     }
 }

@@ -1,5 +1,6 @@
 package com.tikkatimer.presentation.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tikkatimer.data.local.SettingsDataStore
@@ -7,7 +8,9 @@ import com.tikkatimer.domain.model.AppLanguage
 import com.tikkatimer.domain.model.AppSettings
 import com.tikkatimer.domain.model.ColorTheme
 import com.tikkatimer.domain.model.ThemeMode
+import com.tikkatimer.widget.TimerWidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -23,6 +26,7 @@ class SettingsViewModel
     @Inject
     constructor(
         private val settingsDataStore: SettingsDataStore,
+        @ApplicationContext private val context: Context,
     ) : ViewModel() {
         val settings: StateFlow<AppSettings> =
             settingsDataStore.settingsFlow
@@ -43,10 +47,12 @@ class SettingsViewModel
 
         /**
          * 컬러 테마 변경
+         * 위젯도 새 테마 색상으로 갱신
          */
         fun setColorTheme(colorTheme: ColorTheme) {
             viewModelScope.launch {
                 settingsDataStore.setColorTheme(colorTheme)
+                TimerWidgetUpdater.onThemeChanged(context)
             }
         }
 

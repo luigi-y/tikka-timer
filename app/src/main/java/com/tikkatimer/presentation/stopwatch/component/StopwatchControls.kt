@@ -38,87 +38,113 @@ fun StopwatchControls(
     onLapClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isRunning = state == StopwatchState.RUNNING
+    val isIdle = state == StopwatchState.IDLE
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // 왼쪽 버튼: 전체 초기화 (항상 표시, IDLE 상태에서만 비활성화)
-        FilledTonalIconButton(
+        ResetButton(
+            enabled = !isIdle,
             onClick = onResetClick,
-            modifier = Modifier.size(64.dp),
-            enabled = state != StopwatchState.IDLE,
-            colors =
-                IconButtonDefaults.filledTonalIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                ),
-        ) {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = stringResource(R.string.stopwatch_reset),
-                modifier = Modifier.size(28.dp),
-                tint =
-                    if (state != StopwatchState.IDLE) {
-                        MaterialTheme.colorScheme.onErrorContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
-                    },
-            )
-        }
+        )
 
         Spacer(modifier = Modifier.width(24.dp))
 
-        // 중앙 버튼: 시작/일시정지
-        FilledIconButton(
-            onClick = {
-                when (state) {
-                    StopwatchState.RUNNING -> onPauseClick()
-                    else -> onStartClick()
-                }
-            },
-            modifier = Modifier.size(80.dp),
-            colors =
-                IconButtonDefaults.filledIconButtonColors(
-                    containerColor =
-                        if (state == StopwatchState.RUNNING) {
-                            MaterialTheme.colorScheme.error
-                        } else {
-                            MaterialTheme.colorScheme.primary
-                        },
-                ),
-        ) {
-            Icon(
-                imageVector =
-                    if (state == StopwatchState.RUNNING) {
-                        Icons.Default.Pause
-                    } else {
-                        Icons.Default.PlayArrow
-                    },
-                contentDescription =
-                    if (state == StopwatchState.RUNNING) {
-                        stringResource(R.string.stopwatch_pause)
-                    } else {
-                        stringResource(R.string.stopwatch_start)
-                    },
-                modifier = Modifier.size(36.dp),
-            )
-        }
+        PlayPauseButton(
+            isRunning = isRunning,
+            onPlayClick = onStartClick,
+            onPauseClick = onPauseClick,
+        )
 
         Spacer(modifier = Modifier.width(24.dp))
 
-        // 오른쪽 버튼: 랩타임 (RUNNING 상태에서만 활성화)
-        FilledTonalIconButton(
+        LapButton(
+            enabled = isRunning,
             onClick = onLapClick,
-            modifier = Modifier.size(64.dp),
-            enabled = state == StopwatchState.RUNNING,
-        ) {
-            Icon(
-                imageVector = Icons.Default.Flag,
-                contentDescription = stringResource(R.string.stopwatch_lap),
-                modifier = Modifier.size(28.dp),
-            )
-        }
+        )
+    }
+}
+
+/**
+ * 전체 초기화 버튼 (IDLE 상태에서만 비활성화)
+ */
+@Composable
+private fun ResetButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    FilledTonalIconButton(
+        onClick = onClick,
+        modifier = Modifier.size(64.dp),
+        enabled = enabled,
+        colors =
+            IconButtonDefaults.filledTonalIconButtonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            ),
+    ) {
+        Icon(
+            imageVector = Icons.Default.Refresh,
+            contentDescription = stringResource(R.string.stopwatch_reset),
+            modifier = Modifier.size(28.dp),
+            tint =
+                if (enabled) {
+                    MaterialTheme.colorScheme.onErrorContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+                },
+        )
+    }
+}
+
+/**
+ * 시작/일시정지 토글 버튼
+ */
+@Composable
+private fun PlayPauseButton(
+    isRunning: Boolean,
+    onPlayClick: () -> Unit,
+    onPauseClick: () -> Unit,
+) {
+    val containerColor =
+        if (isRunning) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val icon = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow
+    val contentDescriptionRes = if (isRunning) R.string.stopwatch_pause else R.string.stopwatch_start
+
+    FilledIconButton(
+        onClick = if (isRunning) onPauseClick else onPlayClick,
+        modifier = Modifier.size(80.dp),
+        colors = IconButtonDefaults.filledIconButtonColors(containerColor = containerColor),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = stringResource(contentDescriptionRes),
+            modifier = Modifier.size(36.dp),
+        )
+    }
+}
+
+/**
+ * 랩타임 기록 버튼 (RUNNING 상태에서만 활성화)
+ */
+@Composable
+private fun LapButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    FilledTonalIconButton(
+        onClick = onClick,
+        modifier = Modifier.size(64.dp),
+        enabled = enabled,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Flag,
+            contentDescription = stringResource(R.string.stopwatch_lap),
+            modifier = Modifier.size(28.dp),
+        )
     }
 }
 

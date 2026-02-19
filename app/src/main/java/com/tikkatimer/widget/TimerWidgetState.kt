@@ -19,6 +19,8 @@ data class TimerWidgetState(
     val isRunning: Boolean = false,
     /** 타이머 일시정지 여부 */
     val isPaused: Boolean = false,
+    /** 타이머 완료 여부 (경고 상태) */
+    val isFinished: Boolean = false,
     /** 남은 시간 (밀리초) - 저장된 시점의 값 */
     val remainingMillis: Long = 0L,
     /** 전체 시간 (밀리초) */
@@ -99,17 +101,116 @@ private val Context.timerWidgetDataStore: DataStore<Preferences> by preferencesD
 
 /**
  * 위젯 상태 저장소
- * 타이머 상태를 DataStore에 저장하고 위젯에서 읽을 수 있도록 함
+ * 타이머 상태를 DataStore + SharedPreferences에 저장
+ * SharedPreferences: 동기 읽기용 (위젯 onUpdate)
+ * DataStore: Flow 기반 비동기 읽기용
  */
 object TimerWidgetStateManager {
     private val IS_RUNNING = booleanPreferencesKey("is_running")
     private val IS_PAUSED = booleanPreferencesKey("is_paused")
+    private val IS_FINISHED = booleanPreferencesKey("is_finished")
     private val REMAINING_MILLIS = longPreferencesKey("remaining_millis")
     private val TOTAL_MILLIS = longPreferencesKey("total_millis")
     private val TIMER_NAME = stringPreferencesKey("timer_name")
     private val TIMER_ID = stringPreferencesKey("timer_id")
     private val LAST_UPDATED_AT = longPreferencesKey("last_updated_at")
     private val TARGET_END_TIME_MILLIS = longPreferencesKey("target_end_time_millis")
+
+    // SharedPreferences 키 (동기 읽기용)
+    private const val PREFS_NAME = "timer_widget_state_sync"
+    private const val KEY_IS_RUNNING = "is_running"
+    private const val KEY_IS_PAUSED = "is_paused"
+    private const val KEY_IS_FINISHED = "is_finished"
+    private const val KEY_REMAINING_MILLIS = "remaining_millis"
+    private const val KEY_TOTAL_MILLIS = "total_millis"
+    private const val KEY_TIMER_NAME = "timer_name"
+    private const val KEY_TIMER_ID = "timer_id"
+    private const val KEY_TARGET_END_TIME_MILLIS = "target_end_time_millis"
+
+    /**
+     * 동기적으로 위젯 상태 읽기 (SharedPreferences)
+     * 위젯 onUpdate에서 즉시 사용
+     */
+    fun getStateSync(context: Context): TimerWidgetState {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return TimerWidgetState(
+            isRunning = prefs.getBoolean(KEY_IS_RUNNING, false),
+            isPaused = prefs.getBoolean(KEY_IS_PAUSED, false),
+            isFinished = prefs.getBoolean(KEY_IS_FINISHED, false),
+            remainingMillis = prefs.getLong(KEY_REMAINING_MILLIS, 0L),
+            totalMillis = prefs.getLong(KEY_TOTAL_MILLIS, 0L),
+            timerName = prefs.getString(KEY_TIMER_NAME, "") ?: "",
+            timerId = prefs.getString(KEY_TIMER_ID, "") ?: "",
+            lastUpdatedAt = System.currentTimeMillis(),
+            targetEndTimeMillis = prefs.getLong(KEY_TARGET_END_TIME_MILLIS, 0L),
+        )
+    }
+
+    /**
+     * SharedPreferences에 상태 저장 (동기)
+     */
+    private fun saveToSharedPrefs(
+        context: Context,
+        isRunning: Boolean,
+        isPaused: Boolean,
+        isFinished: Boolean,
+        remainingMillis: Long = 0L,
+        totalMillis: Long = 0L,
+        timerName: String = "",
+        timerId: String = "",
+        targetEndTimeMillis: Long = 0L,
+    ) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_IS_RUNNING, isRunning)
+            .putBoolean(KEY_IS_PAUSED, isPaused)
+            .putBoolean(KEY_IS_FINISHED, isFinished)
+            .putLong(KEY_REMAINING_MILLIS, remainingMillis)
+            .putLong(KEY_TOTAL_MILLIS, totalMillis)
+            .putString(KEY_TIMER_NAME, timerName)
+            .putString(KEY_TIMER_ID, timerId)
+            .putLong(KEY_TARGET_END_TIME_MILLIS, targetEndTimeMillis)
+            .apply()
+    }
+
+    /**
+     * 동기적으로 위젯 상태 초기화 (SharedPreferences)
+     * 앱 시작 시 위젯 상태 검증용
+     */
+    fun clearSync(context: Context) {
+        saveToSharedPrefs(
+            context = context,
+            isRunning = false,
+            isPaused = false,
+            isFinished = false,
+            remainingMillis = 0L,
+            totalMillis = 0L,
+            timerName = "",
+            timerId = "",
+            targetEndTimeMillis = 0L,
+        )
+    }
+
+    /**
+     * 동기적으로 위젯 완료 상태 설정 (SharedPreferences)
+     * 타이머 종료 알람에서 사용
+     */
+    fun setFinishedSync(
+        context: Context,
+        timerName: String,
+    ) {
+        saveToSharedPrefs(
+            context = context,
+            isRunning = false,
+            isPaused = false,
+            isFinished = true,
+            remainingMillis = 0L,
+            totalMillis = 0L,
+            timerName = timerName,
+            timerId = "",
+            targetEndTimeMillis = 0L,
+        )
+    }
 
     /**
      * 위젯 상태 Flow
@@ -119,6 +220,7 @@ object TimerWidgetStateManager {
             TimerWidgetState(
                 isRunning = prefs[IS_RUNNING] ?: false,
                 isPaused = prefs[IS_PAUSED] ?: false,
+                isFinished = prefs[IS_FINISHED] ?: false,
                 remainingMillis = prefs[REMAINING_MILLIS] ?: 0L,
                 totalMillis = prefs[TOTAL_MILLIS] ?: 0L,
                 timerName = prefs[TIMER_NAME] ?: "",
@@ -141,9 +243,25 @@ object TimerWidgetStateManager {
     ) {
         val now = System.currentTimeMillis()
         val endTime = if (targetEndTimeMillis > 0) targetEndTimeMillis else now + remainingMillis
+
+        // SharedPreferences에 동기 저장
+        saveToSharedPrefs(
+            context = context,
+            isRunning = true,
+            isPaused = false,
+            isFinished = false,
+            remainingMillis = remainingMillis,
+            totalMillis = totalMillis,
+            timerName = timerName,
+            timerId = timerId,
+            targetEndTimeMillis = endTime,
+        )
+
+        // DataStore에 비동기 저장
         context.timerWidgetDataStore.edit { prefs ->
             prefs[IS_RUNNING] = true
             prefs[IS_PAUSED] = false
+            prefs[IS_FINISHED] = false
             prefs[REMAINING_MILLIS] = remainingMillis
             prefs[TOTAL_MILLIS] = totalMillis
             prefs[TIMER_NAME] = timerName
@@ -160,10 +278,57 @@ object TimerWidgetStateManager {
         context: Context,
         remainingMillis: Long,
     ) {
+        // SharedPreferences에 동기 저장
+        val currentState = getStateSync(context)
+        saveToSharedPrefs(
+            context = context,
+            isRunning = false,
+            isPaused = true,
+            isFinished = false,
+            remainingMillis = remainingMillis,
+            totalMillis = currentState.totalMillis,
+            timerName = currentState.timerName,
+            timerId = currentState.timerId,
+            targetEndTimeMillis = 0L,
+        )
+
+        // DataStore에 비동기 저장
         context.timerWidgetDataStore.edit { prefs ->
             prefs[IS_RUNNING] = false
             prefs[IS_PAUSED] = true
+            prefs[IS_FINISHED] = false
             prefs[REMAINING_MILLIS] = remainingMillis
+            prefs[LAST_UPDATED_AT] = System.currentTimeMillis()
+        }
+    }
+
+    /**
+     * 타이머 완료 상태 저장 (경고 표시)
+     */
+    suspend fun setFinished(
+        context: Context,
+        timerName: String,
+    ) {
+        // SharedPreferences에 동기 저장
+        saveToSharedPrefs(
+            context = context,
+            isRunning = false,
+            isPaused = false,
+            isFinished = true,
+            remainingMillis = 0L,
+            totalMillis = 0L,
+            timerName = timerName,
+            timerId = "",
+            targetEndTimeMillis = 0L,
+        )
+
+        // DataStore에 비동기 저장
+        context.timerWidgetDataStore.edit { prefs ->
+            prefs[IS_RUNNING] = false
+            prefs[IS_PAUSED] = false
+            prefs[IS_FINISHED] = true
+            prefs[REMAINING_MILLIS] = 0L
+            prefs[TIMER_NAME] = timerName
             prefs[LAST_UPDATED_AT] = System.currentTimeMillis()
         }
     }
@@ -185,9 +350,24 @@ object TimerWidgetStateManager {
      * 타이머 종료/초기화
      */
     suspend fun clear(context: Context) {
+        // SharedPreferences에 동기 저장
+        saveToSharedPrefs(
+            context = context,
+            isRunning = false,
+            isPaused = false,
+            isFinished = false,
+            remainingMillis = 0L,
+            totalMillis = 0L,
+            timerName = "",
+            timerId = "",
+            targetEndTimeMillis = 0L,
+        )
+
+        // DataStore에 비동기 저장
         context.timerWidgetDataStore.edit { prefs ->
             prefs[IS_RUNNING] = false
             prefs[IS_PAUSED] = false
+            prefs[IS_FINISHED] = false
             prefs[REMAINING_MILLIS] = 0L
             prefs[TOTAL_MILLIS] = 0L
             prefs[TIMER_NAME] = ""

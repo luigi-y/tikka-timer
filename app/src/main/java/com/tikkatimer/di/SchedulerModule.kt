@@ -14,8 +14,8 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SchedulerModule {
+fun interface SchedulerModule {
     @Binds
     @Singleton
-    abstract fun bindAlarmScheduler(impl: AlarmSchedulerImpl): AlarmScheduler
+    fun bindAlarmScheduler(impl: AlarmSchedulerImpl): AlarmScheduler
 }

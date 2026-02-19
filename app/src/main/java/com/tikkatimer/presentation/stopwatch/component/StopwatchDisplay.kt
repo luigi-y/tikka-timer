@@ -36,25 +36,16 @@ fun StopwatchDisplay(
         ) {
             // 시간 (1시간 이상일 때만 표시)
             if (stopwatch.hours > 0) {
-                TimeUnit(
-                    value = stopwatch.hours,
-                    label = "시간",
-                )
+                TimeUnit(value = stopwatch.hours)
                 TimeSeparator()
             }
 
             // 분
-            TimeUnit(
-                value = stopwatch.minutes,
-                label = "분",
-            )
+            TimeUnit(value = stopwatch.minutes)
             TimeSeparator()
 
             // 초
-            TimeUnit(
-                value = stopwatch.seconds,
-                label = "초",
-            )
+            TimeUnit(value = stopwatch.seconds)
             MillisSeparator()
 
             // 센티초 (밀리초/10)
@@ -73,10 +64,7 @@ fun StopwatchDisplay(
 }
 
 @Composable
-private fun TimeUnit(
-    value: Int,
-    label: String,
-) {
+private fun TimeUnit(value: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

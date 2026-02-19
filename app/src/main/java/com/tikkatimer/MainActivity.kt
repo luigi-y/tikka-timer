@@ -1,6 +1,7 @@
 package com.tikkatimer
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -11,12 +12,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.tikkatimer.data.local.SettingsDataStore
 import com.tikkatimer.domain.model.AppSettings
 import com.tikkatimer.domain.model.ThemeMode
 import com.tikkatimer.presentation.main.MainScreen
+import com.tikkatimer.presentation.main.MainTab
+import com.tikkatimer.sync.TimerStateSync
 import com.tikkatimer.ui.theme.TikkaTimerTheme
 import com.tikkatimer.util.LocaleHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +38,17 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settingsDataStore: SettingsDataStore
 
+    @Inject
+    lateinit var timerStateSync: TimerStateSync
+
+    companion object {
+        /** 타이머 탭으로 이동하라는 Intent extra */
+        const val EXTRA_NAVIGATE_TO_TIMER = "navigate_to_timer"
+    }
+
+    /** 외부에서 탭 변경 요청을 전달하기 위한 State */
+    private val navigateToTimerState = mutableStateOf(false)
+
     /**
      * 알림 권한 요청 런처 (Android 13+)
      */
@@ -46,6 +61,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /** Intent에서 타이머 탭 이동 요청 확인 */
+    private fun getInitialTabFromIntent(intent: Intent?): Int? {
+        return if (intent?.getBooleanExtra(EXTRA_NAVIGATE_TO_TIMER, false) == true) {
+            MainTab.TIMER.ordinal
+        } else {
+            null
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,6 +81,14 @@ class MainActivity : AppCompatActivity() {
 
         // 알림 권한 요청 (Android 13+)
         requestNotificationPermission()
+
+        // 앱이 새로 시작될 때만 initialTab 적용 (이미 실행 중이면 null)
+        val initialTab =
+            if (savedInstanceState == null) {
+                getInitialTabFromIntent(intent)
+            } else {
+                null
+            }
 
         enableEdgeToEdge()
         setContent {
@@ -71,12 +103,44 @@ class MainActivity : AppCompatActivity() {
                     ThemeMode.DARK -> true
                 }
 
+            // onNewIntent에서 탭 변경 요청 감지
+            val navigateToTimer by navigateToTimerState
+
             TikkaTimerTheme(
                 darkTheme = darkTheme,
                 colorTheme = settings.colorTheme,
             ) {
-                MainScreen()
+                MainScreen(
+                    initialTab = initialTab,
+                    timerStateSync = timerStateSync,
+                    navigateToTimer = navigateToTimer,
+                    onNavigateToTimerHandled = { navigateToTimerState.value = false },
+                )
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        // 이미 실행 중인 앱으로 돌아올 때 타이머 탭 이동 요청 처리
+        if (intent.getBooleanExtra(EXTRA_NAVIGATE_TO_TIMER, false)) {
+            navigateToTimerState.value = true
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 앱이 포그라운드로 돌아올 때 위젯 상태 동기화
+        syncWidgetState()
+    }
+
+    /**
+     * 현재 타이머 상태를 위젯에 동기화
+     */
+    private fun syncWidgetState() {
+        lifecycleScope.launch {
+            timerStateSync.syncCurrentStateToWidget()
         }
     }
 
