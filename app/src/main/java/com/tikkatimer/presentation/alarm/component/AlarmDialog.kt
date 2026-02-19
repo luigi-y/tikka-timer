@@ -284,7 +284,10 @@ private fun SettingItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = label)
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {

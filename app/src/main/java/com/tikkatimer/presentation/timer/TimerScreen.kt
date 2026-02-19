@@ -212,6 +212,7 @@ private fun TimerMainScreen(
                         text = stringResource(R.string.timer_running),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(bottom = 4.dp),
                     )
                 }
@@ -239,6 +240,7 @@ private fun TimerMainScreen(
                         text = stringResource(R.string.timer_preset),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(bottom = 4.dp),
                     )
                 }

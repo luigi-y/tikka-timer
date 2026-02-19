@@ -45,7 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -120,6 +119,7 @@ private fun SettingsScreenContent(
         Text(
             text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(16.dp),
         )
 
@@ -465,7 +465,11 @@ private fun ColorThemeSelectionDialog(
                                     .background(colorThemeColors[theme] ?: Purple40)
                                     .then(
                                         if (theme == selectedTheme) {
-                                            Modifier.border(2.dp, Color.White, CircleShape)
+                                            Modifier.border(
+                                                2.dp,
+                                                MaterialTheme.colorScheme.surface,
+                                                CircleShape,
+                                            )
                                         } else {
                                             Modifier
                                         },
