@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="16dp" />
-    <!-- Purple 테마 기반 아주 연한 배경색 -->
-    <solid android:color="#F3E5F5" />
+    <!-- Blue 테마 기반 아주 연한 배경색 -->
+    <solid android:color="#D4E3FF" />
 </shape>

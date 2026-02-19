@@ -41,9 +41,9 @@ object WidgetColors {
         mapOf(
             ColorTheme.DEFAULT to
                 IdlePalette(
-                    background = ColorProvider(Color(0xFFF3EDF7)),
-                    text = ColorProvider(Color(0xFF49454F)),
-                    accent = ColorProvider(Color(0xFF6650a4)),
+                    background = ColorProvider(Color(0xFFD4E3FF)),
+                    text = ColorProvider(Color(0xFF43474E)),
+                    accent = ColorProvider(Color(0xFF1565C0)),
                 ),
             ColorTheme.OCEAN to
                 IdlePalette(
@@ -108,7 +108,7 @@ object WidgetColors {
      */
     fun getIdleAccentArgb(colorTheme: ColorTheme): Int =
         when (colorTheme) {
-            ColorTheme.DEFAULT -> 0xFF6650a4.toInt()
+            ColorTheme.DEFAULT -> 0xFF1565C0.toInt()
             ColorTheme.OCEAN -> 0xFF1976D2.toInt()
             ColorTheme.FOREST -> 0xFF388E3C.toInt()
             ColorTheme.SUNSET -> 0xFFF57C00.toInt()
@@ -121,7 +121,7 @@ object WidgetColors {
      */
     fun getIdleBackgroundArgb(colorTheme: ColorTheme): Int =
         when (colorTheme) {
-            ColorTheme.DEFAULT -> 0xFFF3EDF7.toInt()
+            ColorTheme.DEFAULT -> 0xFFD4E3FF.toInt()
             ColorTheme.OCEAN -> 0xFFE3F2FD.toInt()
             ColorTheme.FOREST -> 0xFFE8F5E9.toInt()
             ColorTheme.SUNSET -> 0xFFFFF3E0.toInt()

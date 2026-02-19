@@ -3,8 +3,8 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- Purple 테마 색상 (Purple40) -->
+    <!-- Blue 테마 색상 (Blue40) -->
     <path
-        android:fillColor="#6650a4"
+        android:fillColor="#1565C0"
         android:pathData="M6,19h4V5H6v14zM14,5v14h4V5h-4z"/>
 </vector>

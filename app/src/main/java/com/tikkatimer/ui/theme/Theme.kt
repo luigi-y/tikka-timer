@@ -7,12 +7,12 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.tikkatimer.domain.model.ColorTheme
 
-// Default (Purple)
+// Default (Blue)
 private val DefaultDarkColorScheme =
     darkColorScheme(
-        primary = Purple80,
-        secondary = PurpleGrey80,
-        tertiary = Pink80,
+        primary = Blue80,
+        secondary = BlueGrey80,
+        tertiary = BlueAccent80,
         primaryContainer = DefaultPrimaryContainer80,
         onPrimaryContainer = DefaultOnPrimaryContainer80,
         secondaryContainer = DefaultSecondaryContainer80,
@@ -28,9 +28,9 @@ private val DefaultDarkColorScheme =
     )
 private val DefaultLightColorScheme =
     lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
+        primary = Blue40,
+        secondary = BlueGrey40,
+        tertiary = BlueAccent40,
         primaryContainer = DefaultPrimaryContainer40,
         onPrimaryContainer = DefaultOnPrimaryContainer40,
         secondaryContainer = DefaultSecondaryContainer40,

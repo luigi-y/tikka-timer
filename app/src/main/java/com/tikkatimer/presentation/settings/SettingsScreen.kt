@@ -56,11 +56,11 @@ import com.tikkatimer.domain.model.AppLanguage
 import com.tikkatimer.domain.model.AppSettings
 import com.tikkatimer.domain.model.ColorTheme
 import com.tikkatimer.domain.model.ThemeMode
+import com.tikkatimer.ui.theme.Blue40
 import com.tikkatimer.ui.theme.Cherry40
 import com.tikkatimer.ui.theme.Forest40
 import com.tikkatimer.ui.theme.Lavender40
 import com.tikkatimer.ui.theme.Ocean40
-import com.tikkatimer.ui.theme.Purple40
 import com.tikkatimer.ui.theme.Sunset40
 import com.tikkatimer.ui.theme.TikkaTimerTheme
 import com.tikkatimer.util.LocaleHelper
@@ -433,7 +433,7 @@ private fun ColorThemeSelectionDialog(
 ) {
     val colorThemeColors =
         mapOf(
-            ColorTheme.DEFAULT to Purple40,
+            ColorTheme.DEFAULT to Blue40,
             ColorTheme.OCEAN to Ocean40,
             ColorTheme.FOREST to Forest40,
             ColorTheme.SUNSET to Sunset40,
@@ -462,7 +462,7 @@ private fun ColorThemeSelectionDialog(
                                 Modifier
                                     .size(24.dp)
                                     .clip(CircleShape)
-                                    .background(colorThemeColors[theme] ?: Purple40)
+                                    .background(colorThemeColors[theme] ?: Blue40)
                                     .then(
                                         if (theme == selectedTheme) {
                                             Modifier.border(
