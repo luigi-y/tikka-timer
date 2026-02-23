@@ -6,7 +6,7 @@
 
 An Android app that provides alarm clock, timer, and stopwatch features.
 
-[한국어](README.ko.md) | [Privacy Policy](https://luigi-y.github.io/tikka-timer/privacy-policy)
+[한국어](README.ko.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [Privacy Policy](https://luigi-y.github.io/tikka-timer/privacy-policy)
 
 ## Features
 

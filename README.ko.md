@@ -6,7 +6,7 @@
 
 알람시계, 타이머, 스톱워치 기능을 제공하는 안드로이드 앱입니다.
 
-[English](README.md) | [개인정보처리방침](https://luigi-y.github.io/tikka-timer/privacy-policy)
+[English](README.md) | [日本語](README.ja.md) | [中文](README.zh.md) | [개인정보처리방침](https://luigi-y.github.io/tikka-timer/privacy-policy)
 
 ## 주요 기능
 

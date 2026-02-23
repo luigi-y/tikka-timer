@@ -1,6 +1,6 @@
-# Privacy Policy / 개인정보처리방침
+# Privacy Policy / 개인정보処理方針 / 隐私政策 / 개인정보처리방침
 
-**Last Updated / 최종 수정일: 2026-02-02**
+**Last Updated / 最終更新日 / 最后更新日 / 최종 수정일: 2026-02-02**
 
 ---
 
@@ -40,6 +40,7 @@ The App may request the following permissions:
 | `RECEIVE_BOOT_COMPLETED` | To restore scheduled alarms after device restart |
 | `FOREGROUND_SERVICE` | To keep timers running when the app is in background |
 | `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | To play alarm sounds while the app is in background |
+| `FOREGROUND_SERVICE_SPECIAL_USE` | To keep timers and stopwatch running in background |
 | `WAKE_LOCK` | To keep the device awake when an alarm or timer is ringing |
 | `USE_FULL_SCREEN_INTENT` | To display the alarm screen over the lock screen |
 
@@ -101,6 +102,7 @@ Tikka Timer는 전적으로 사용자의 기기에서만 작동하며 다음을 
 | `RECEIVE_BOOT_COMPLETED` | 기기 재시작 후 예약된 알람 복원 |
 | `FOREGROUND_SERVICE` | 앱이 백그라운드에 있을 때 타이머 계속 실행 |
 | `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | 앱이 백그라운드에 있을 때 알람 소리 재생 |
+| `FOREGROUND_SERVICE_SPECIAL_USE` | 백그라운드에서 타이머 및 스톱워치 계속 실행 |
 | `WAKE_LOCK` | 알람 또는 타이머가 울릴 때 기기를 깨운 상태로 유지 |
 | `USE_FULL_SCREEN_INTENT` | 잠금 화면 위에 알람 화면 표시 |
 
@@ -123,3 +125,127 @@ Tikka Timer는 전적으로 사용자의 기기에서만 작동하며 다음을 
 본 개인정보처리방침에 대한 문의 사항이 있으시면 아래로 연락해 주세요:
 
 **이메일:** tikkatimer.app@gmail.com
+
+---
+
+## 日本語
+
+### 概要
+
+Tikka Timer（「本アプリ」）は、ユーザーのプライバシー保護を最優先としています。本プライバシーポリシーは、本アプリの使用時に情報がどのように取り扱われるかを説明します。
+
+### 情報の収集
+
+**本アプリは、いかなる個人情報も収集しません。**
+
+Tikka Timerは完全にユーザーの端末上でのみ動作し、以下を行いません：
+- 外部サーバーへの個人データの収集、送信、保存
+- 利用パターンや行動の追跡
+- 分析ツールや広告サービスの使用
+- アカウント作成やログインの要求
+
+### データの保存
+
+本アプリで作成されたすべてのデータ（アラーム、タイマー、プリセット）は、Androidのローカルデータベース（Room）を使用して端末にローカル保存されます。このデータは：
+- 端末外部に送信されません
+- 開発者や第三者がアクセスすることはできません
+- アプリの削除またはアプリデータの削除により消去可能です
+
+### 使用する権限
+
+本アプリは以下の権限を要求する場合があります：
+
+| 権限 | 目的 |
+|------|------|
+| `POST_NOTIFICATIONS` | タイマーおよびアラームの通知表示 |
+| `SCHEDULE_EXACT_ALARM` | 正確な時刻にアラームを予約 |
+| `USE_EXACT_ALARM` | 予約された正確な時刻にアラームが鳴ることを保証 |
+| `VIBRATE` | アラームまたはタイマー完了時に端末を振動 |
+| `RECEIVE_BOOT_COMPLETED` | 端末再起動後に予約されたアラームを復元 |
+| `FOREGROUND_SERVICE` | アプリがバックグラウンドにある時にタイマーを継続実行 |
+| `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | アプリがバックグラウンドにある時にアラーム音を再生 |
+| `FOREGROUND_SERVICE_SPECIAL_USE` | バックグラウンドでタイマーおよびストップウォッチを継続実行 |
+| `WAKE_LOCK` | アラームまたはタイマーが鳴っている時に端末を起動状態に維持 |
+| `USE_FULL_SCREEN_INTENT` | ロック画面上にアラーム画面を表示 |
+
+これらの権限はアプリのコア機能にのみ使用され、いかなる情報の収集にも使用されません。
+
+### 第三者サービス
+
+本アプリは、いかなる第三者サービス、SDK、分析ツールも統合していません。
+
+### 児童のプライバシー
+
+本アプリは、児童からいかなる情報も収集しません。個人情報を収集しないため、すべての年齢のユーザーが安全にご利用いただけます。
+
+### ポリシーの変更
+
+本プライバシーポリシーは随時更新される場合があります。変更はドキュメント上部の「最終更新日」に反映されます。
+
+### お問い合わせ
+
+本プライバシーポリシーに関するご質問がございましたら、以下までご連絡ください：
+
+**メール:** tikkatimer.app@gmail.com
+
+---
+
+## 中文
+
+### 概述
+
+Tikka Timer（"本应用"）致力于保护用户的隐私。本隐私政策说明了您使用本应用时我们如何处理您的信息。
+
+### 信息收集
+
+**本应用不收集任何个人信息。**
+
+Tikka Timer完全在您的设备上运行，不会：
+- 在外部服务器上收集、传输或存储任何个人数据
+- 跟踪您的使用模式或行为
+- 使用分析工具或广告服务
+- 要求创建账户或登录
+
+### 数据存储
+
+本应用创建的所有数据（闹钟、计时器、预设）均使用Android的本地数据库（Room）存储在您的设备上。这些数据：
+- 不会离开您的设备
+- 开发者或任何第三方无法访问
+- 可通过卸载应用或清除应用数据来删除
+
+### 使用的权限
+
+本应用可能请求以下权限：
+
+| 权限 | 用途 |
+|------|------|
+| `POST_NOTIFICATIONS` | 显示计时器和闹钟通知 |
+| `SCHEDULE_EXACT_ALARM` | 在精确时间安排闹钟 |
+| `USE_EXACT_ALARM` | 确保闹钟在预定的精确时间响铃 |
+| `VIBRATE` | 闹钟或计时器完成时振动设备 |
+| `RECEIVE_BOOT_COMPLETED` | 设备重启后恢复已安排的闹钟 |
+| `FOREGROUND_SERVICE` | 应用在后台时保持计时器继续运行 |
+| `FOREGROUND_SERVICE_MEDIA_PLAYBACK` | 应用在后台时播放闹钟铃声 |
+| `FOREGROUND_SERVICE_SPECIAL_USE` | 在后台保持计时器和秒表继续运行 |
+| `WAKE_LOCK` | 闹钟或计时器响铃时保持设备唤醒状态 |
+| `USE_FULL_SCREEN_INTENT` | 在锁屏上方显示闹钟界面 |
+
+这些权限仅用于应用的核心功能，不用于收集任何信息。
+
+### 第三方服务
+
+本应用不集成任何第三方服务、SDK或分析工具。
+
+### 儿童隐私
+
+本应用不会故意收集儿童的任何信息。由于我们不收集任何个人信息，所有年龄段的用户都可以安全使用本应用。
+
+### 政策变更
+
+本隐私政策可能会不时更新。任何变更将反映在文档顶部的"最后更新日"中。
+
+### 联系方式
+
+如您对本隐私政策有任何疑问，请通过以下方式联系我们：
+
+**邮箱:** tikkatimer.app@gmail.com
