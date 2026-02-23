@@ -3,9 +3,9 @@ layout: default
 title: Privacy Policy - Tikka Timer
 ---
 
-# Privacy Policy / 개인정보処理方針 / 隐私政策 / 개인정보처리방침
+# Privacy Policy
 
-**Last Updated / 最終更新日 / 最后更新日 / 최종 수정일: 2026-02-02**
+**Last Updated: 2026-02-02**
 
 ---
 
