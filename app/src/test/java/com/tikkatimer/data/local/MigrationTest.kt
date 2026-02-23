@@ -60,11 +60,26 @@ class MigrationTest {
     }
 
     @Test
-    fun `마지막 마이그레이션이 현재 버전 2로 끝난다`() {
+    fun `마지막 마이그레이션이 현재 버전 3으로 끝난다`() {
         val migrations = AppDatabase.ALL_MIGRATIONS.sortedBy { it.endVersion }
         if (migrations.isNotEmpty()) {
-            // 현재 데이터베이스 버전은 2
-            assertEquals(2, migrations.last().endVersion)
+            // 현재 데이터베이스 버전은 3
+            assertEquals(3, migrations.last().endVersion)
         }
+    }
+
+    @Test
+    fun `MIGRATION_2_3가 정의되어 있다`() {
+        val migration = AppDatabase.MIGRATION_2_3
+        assertNotNull(migration)
+        assertEquals(2, migration.startVersion)
+        assertEquals(3, migration.endVersion)
+    }
+
+    @Test
+    fun `ALL_MIGRATIONS에 MIGRATION_2_3가 포함되어 있다`() {
+        val migrations = AppDatabase.ALL_MIGRATIONS
+        val migration2To3 = migrations.find { it.startVersion == 2 && it.endVersion == 3 }
+        assertNotNull(migration2To3)
     }
 }

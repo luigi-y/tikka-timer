@@ -75,7 +75,7 @@
         <!-- 부팅 완료 시 알람 복원 BroadcastReceiver -->
         <receiver
             android:name=".receiver.BootReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

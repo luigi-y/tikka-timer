@@ -171,4 +171,12 @@
     <!-- Privacy Policy -->
     <string name="settings_privacy_policy">隐私政策</string>
     <string name="settings_privacy_policy_desc">了解我们如何处理您的数据</string>
+
+    <!-- Widget -->
+    <string name="timer">计时器</string>
+    <string name="widget_timer_small_name">计时器</string>
+    <string name="widget_timer_small_description">在主屏幕上查看计时器状态</string>
+    <string name="widget_tap_to_start">点击开始</string>
+    <string name="widget_running">运行中</string>
+    <string name="widget_paused">已暂停</string>
 </resources>

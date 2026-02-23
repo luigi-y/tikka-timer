@@ -171,4 +171,12 @@
     <!-- Privacy Policy -->
     <string name="settings_privacy_policy">プライバシーポリシー</string>
     <string name="settings_privacy_policy_desc">個人情報の取り扱いについて</string>
+
+    <!-- Widget -->
+    <string name="timer">タイマー</string>
+    <string name="widget_timer_small_name">タイマー</string>
+    <string name="widget_timer_small_description">ホーム画面でタイマーの状態を確認</string>
+    <string name="widget_tap_to_start">タップして開始</string>
+    <string name="widget_running">実行中</string>
+    <string name="widget_paused">一時停止</string>
 </resources>

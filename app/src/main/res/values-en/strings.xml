@@ -171,4 +171,12 @@
     <!-- Privacy Policy -->
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_privacy_policy_desc">How we handle your data</string>
+
+    <!-- Widget -->
+    <string name="timer">Timer</string>
+    <string name="widget_timer_small_name">Timer</string>
+    <string name="widget_timer_small_description">Check timer status on your home screen</string>
+    <string name="widget_tap_to_start">Tap to start</string>
+    <string name="widget_running">Running</string>
+    <string name="widget_paused">Paused</string>
 </resources>
