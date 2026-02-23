@@ -342,7 +342,7 @@ class TimerForegroundService : Service() {
                         getString(R.string.stopwatch_elapsed, formatTime(elapsed))
                 }
                 else -> {
-                    "Tikka Timer" to ""
+                    getString(R.string.app_name) to ""
                 }
             }
 

@@ -93,8 +93,6 @@
             android:label="@string/widget_timer_small_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.luigi.tikkatimer.ACTION_WIDGET_CLICK" />
-                <action android:name="com.luigi.tikkatimer.ACTION_TIMER_FINISHED" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

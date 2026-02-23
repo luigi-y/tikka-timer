@@ -31,6 +31,9 @@ class AlarmSchedulerImpl
             private const val TAG = "AlarmSchedulerImpl"
             private const val MAX_RETRY_COUNT = 3
             private const val RETRY_DELAY_MS = 100L
+
+            /** 알람별 고유 PendingIntent action prefix */
+            const val ACTION_ALARM_PREFIX = "com.luigi.tikkatimer.ALARM_"
         }
 
         /**
@@ -112,7 +115,7 @@ class AlarmSchedulerImpl
 
             val intent =
                 Intent(context, AlarmReceiver::class.java).apply {
-                    action = "com.luigi.tikkatimer.ALARM_$alarmId"
+                    action = "${ACTION_ALARM_PREFIX}$alarmId"
                 }
 
             val pendingIntent =
@@ -153,7 +156,7 @@ class AlarmSchedulerImpl
         private fun createAlarmPendingIntent(alarm: Alarm): PendingIntent {
             val intent =
                 Intent(context, AlarmReceiver::class.java).apply {
-                    action = "com.luigi.tikkatimer.ALARM_${alarm.id}"
+                    action = "${ACTION_ALARM_PREFIX}${alarm.id}"
                     putExtra(AlarmReceiver.EXTRA_ALARM_ID, alarm.id)
                     putExtra(AlarmReceiver.EXTRA_SOUND_TYPE, alarm.soundType.name)
                     putExtra(AlarmReceiver.EXTRA_VIBRATION_PATTERN, alarm.vibrationPattern.name)

@@ -72,6 +72,21 @@
 -keep class androidx.datastore.** { *; }
 
 # ============================================================================
+# Logging - Release 빌드에서 debug/verbose/info 로그 제거
+# ============================================================================
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int v(...);
+    public static int i(...);
+}
+
+# ============================================================================
+# Glance Widget
+# ============================================================================
+-keep class androidx.glance.** { *; }
+-dontwarn androidx.glance.**
+
+# ============================================================================
 # App-specific rules
 # ============================================================================
 # Keep domain models (used for serialization/reflection)

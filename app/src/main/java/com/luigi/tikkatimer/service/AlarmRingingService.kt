@@ -44,6 +44,10 @@ class AlarmRingingService : Service() {
         const val ACTION_DISMISS = "com.luigi.tikkatimer.ACTION_DISMISS_ALARM"
         const val ACTION_SNOOZE = "com.luigi.tikkatimer.ACTION_SNOOZE_ALARM"
 
+        /** Activity 종료용 브로드캐스트 액션 */
+        const val BROADCAST_ALARM_DISMISSED = "com.luigi.tikkatimer.ALARM_DISMISSED"
+        const val BROADCAST_ALARM_SNOOZED = "com.luigi.tikkatimer.ALARM_SNOOZED"
+
         const val EXTRA_ALARM_ID = "extra_alarm_id"
         const val EXTRA_SOUND_TYPE = "extra_sound_type"
         const val EXTRA_VIBRATION_PATTERN = "extra_vibration_pattern"
@@ -172,7 +176,7 @@ class AlarmRingingService : Service() {
 
         // Activity 종료 브로드캐스트
         sendBroadcast(
-            Intent("com.luigi.tikkatimer.ALARM_DISMISSED").apply {
+            Intent(BROADCAST_ALARM_DISMISSED).apply {
                 putExtra(EXTRA_ALARM_ID, alarmId)
                 setPackage(packageName)
             },
@@ -212,7 +216,7 @@ class AlarmRingingService : Service() {
 
         // Activity 종료 브로드캐스트
         sendBroadcast(
-            Intent("com.luigi.tikkatimer.ALARM_SNOOZED").apply {
+            Intent(BROADCAST_ALARM_SNOOZED).apply {
                 putExtra(EXTRA_ALARM_ID, alarmId)
                 setPackage(packageName)
             },

@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -85,6 +86,16 @@ class AlarmRingingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 뒤로 가기 비활성화 - 사용자가 명시적으로 해제/스누즈 해야 함
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    // 의도적으로 무시
+                }
+            },
+        )
+
         // 잠금 화면 위에 표시 설정
         setupLockScreenFlags()
 
@@ -98,8 +109,8 @@ class AlarmRingingActivity : ComponentActivity() {
         // 알람 해제/스누즈 브로드캐스트 수신 등록
         val filter =
             IntentFilter().apply {
-                addAction("com.luigi.tikkatimer.ALARM_DISMISSED")
-                addAction("com.luigi.tikkatimer.ALARM_SNOOZED")
+                addAction(AlarmRingingService.BROADCAST_ALARM_DISMISSED)
+                addAction(AlarmRingingService.BROADCAST_ALARM_SNOOZED)
             }
         ContextCompat.registerReceiver(
             this,
@@ -175,11 +186,6 @@ class AlarmRingingActivity : ComponentActivity() {
         } catch (ignored: IllegalArgumentException) {
             // Receiver was already unregistered - safe to ignore
         }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        // 뒤로 가기 비활성화 - 사용자가 명시적으로 해제/스누즈 해야 함
     }
 }
 

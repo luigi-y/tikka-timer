@@ -138,22 +138,24 @@ class NotificationHelper
 
             val title = label?.ifEmpty { null } ?: context.getString(R.string.alarm_notification_title)
 
-            val builder = NotificationCompat.Builder(context, ALARM_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_alarm)
-                .setContentTitle(title)
-                .setContentText(timeText)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setAutoCancel(false)
-                .setOngoing(true)
+            val builder =
+                NotificationCompat.Builder(context, ALARM_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_alarm)
+                    .setContentTitle(title)
+                    .setContentText(timeText)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setCategory(NotificationCompat.CATEGORY_ALARM)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setAutoCancel(false)
+                    .setOngoing(true)
 
             // Android 14+: full-screen intent 권한 확인 후 설정
-            val canUseFullScreen = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                notificationManager.canUseFullScreenIntent()
-            } else {
-                true
-            }
+            val canUseFullScreen =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    notificationManager.canUseFullScreenIntent()
+                } else {
+                    true
+                }
 
             if (canUseFullScreen) {
                 builder.setFullScreenIntent(fullScreenPendingIntent, true)
