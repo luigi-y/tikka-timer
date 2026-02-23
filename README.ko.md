@@ -6,7 +6,7 @@
 
 알람시계, 타이머, 스톱워치 기능을 제공하는 안드로이드 앱입니다.
 
-[English](README.md)
+[English](README.md) | [개인정보처리방침](https://luigi-y.github.io/tikka-timer/privacy-policy)
 
 ## 주요 기능
 
@@ -14,21 +14,31 @@
 - 알람 추가/편집/삭제
 - 반복 알람 설정 (요일별)
 - 스누즈 기능
-- 진동 설정
-- 커스텀 알람음 지원
+- 커스텀 알람음 및 진동 패턴
+- 잠금 화면 위 전체 화면 알람
 
 ### 타이머
 - 시/분/초 설정
 - 일시정지/재개/리셋
 - +1분 추가 기능
-- 타이머 프리셋 저장
+- 타이머 프리셋 저장 (소리/진동 설정 포함)
 - 원형 진행 표시기
+- Foreground Service를 통한 백그라운드 실행
 
 ### 스톱워치
 - 시작/일시정지/리셋
 - 랩 타임 기록
 - 밀리초 단위 표시
 - 최고/최저 랩 타임 표시
+
+### 위젯
+- 1x1 홈 화면 타이머 위젯
+- 실시간 상태 표시 (대기/실행/일시정지/완료)
+
+### 설정
+- 테마 모드 (라이트/다크/시스템)
+- 6가지 컬러 테마
+- 4개 언어 지원 (한국어, 영어, 일본어, 중국어)
 
 ## 기술 스택
 
@@ -40,6 +50,8 @@
 | **DI** | Hilt |
 | **비동기** | Coroutines + Flow |
 | **로컬 DB** | Room |
+| **위젯** | RemoteViews (AppWidgetProvider) |
+| **백그라운드** | AlarmManager + Foreground Service |
 | **테스트** | JUnit, Mockk, Turbine |
 
 ## 프로젝트 구조
@@ -47,9 +59,7 @@
 ```
 app/src/main/java/com/tikkatimer/
 ├── data/                    # Data 레이어
-│   ├── local/               # Room Database
-│   │   ├── dao/             # DAO 인터페이스
-│   │   └── entity/          # Entity 클래스
+│   ├── local/               # Room Database (DAO, Entity)
 │   ├── mapper/              # Entity <-> Domain 변환
 │   └── repository/          # Repository 구현체
 ├── domain/                  # Domain 레이어
@@ -63,16 +73,19 @@ app/src/main/java/com/tikkatimer/
 │   ├── settings/            # 설정 화면
 │   └── main/                # 메인 화면 (탭 네비게이션)
 ├── di/                      # Hilt 모듈
-├── receiver/                # BroadcastReceiver
-└── ui/theme/                # Compose 테마
+├── receiver/                # BroadcastReceiver (알람, 부팅)
+├── service/                 # Foreground Service
+├── sync/                    # 타이머 상태 동기화
+├── util/                    # 알림, 사운드 매니저
+└── widget/                  # 홈 화면 위젯
 ```
 
 ## 빌드 및 실행
 
 ### 요구사항
-- Android Studio Hedgehog 이상
+- Android Studio Ladybug 이상
 - JDK 21
-- Android SDK 36
+- Android SDK 36 (min SDK 26)
 
 ### 빌드
 ```bash
@@ -91,21 +104,33 @@ app/src/main/java/com/tikkatimer/
 ./gradlew jacocoTestReport
 ```
 
-### 커버리지 리포트 위치
-- HTML: `app/build/reports/jacoco/test/html/index.html`
-- XML (SonarQube용): `app/build/reports/jacoco/test/jacocoTestReport.xml`
+### 코드 품질 검사
+```bash
+# 포맷팅 검사
+./gradlew ktlintCheck
+
+# 정적 분석
+./gradlew detekt
+
+# Android Lint
+./gradlew lintDebug
+```
 
 ## 테스트 현황
 
-### Unit Test
-- **ViewModel**: StopwatchViewModel, TimerViewModel, AlarmViewModel
-- **UseCase**: Alarm UseCase, Timer UseCase
-- **Repository**: AlarmRepository
+### Unit Test (21개)
+- **ViewModel**: AlarmViewModel, TimerViewModel, StopwatchViewModel, SettingsViewModel
+- **UseCase**: AlarmUseCase, TimerUseCase, GetUpcomingAlarmUseCase, DisableOneTimeAlarmUseCase
+- **Repository**: AlarmRepository, TimerRepository
 - **Mapper**: AlarmMapper, TimerMapper
 - **Domain Model**: Alarm, Timer, Stopwatch, LapTime
+- **Service**: AlarmRingingService
+- **Util**: NotificationHelper, AlarmSoundManager, AlarmScheduler
+- **Database**: Migration
 
-### Integration Test
+### Integration Test (3개)
 - **Room DAO**: AlarmDao, TimerPresetDao
+- **Util**: AlarmSoundManager
 
 ## 라이선스
 
