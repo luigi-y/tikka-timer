@@ -67,7 +67,7 @@ We may update this Privacy Policy from time to time. Any changes will be reflect
 
 If you have any questions about this Privacy Policy, please contact us at:
 
-**Email:** tikkatimer.app@gmail.com
+**Email:** herohyohwan@gmail.com
 
 ---
 
@@ -129,7 +129,7 @@ Tikka Timer는 전적으로 사용자의 기기에서만 작동하며 다음을 
 
 본 개인정보처리방침에 대한 문의 사항이 있으시면 아래로 연락해 주세요:
 
-**이메일:** tikkatimer.app@gmail.com
+**이메일:** herohyohwan@gmail.com
 
 ---
 
@@ -191,7 +191,7 @@ Tikka Timerは完全にユーザーの端末上でのみ動作し、以下を行
 
 本プライバシーポリシーに関するご質問がございましたら、以下までご連絡ください：
 
-**メール:** tikkatimer.app@gmail.com
+**メール:** herohyohwan@gmail.com
 
 ---
 
@@ -253,4 +253,4 @@ Tikka Timer完全在您的设备上运行，不会：
 
 如您对本隐私政策有任何疑问，请通过以下方式联系我们：
 
-**邮箱:** tikkatimer.app@gmail.com
+**邮箱:** herohyohwan@gmail.com
