@@ -39,6 +39,8 @@ The App may request the following permissions:
 | `VIBRATE` | To vibrate the device when alarms or timers complete |
 | `RECEIVE_BOOT_COMPLETED` | To restore scheduled alarms after device restart |
 | `FOREGROUND_SERVICE` | To keep timers running when the app is in background |
+| `WAKE_LOCK` | To keep the device awake when an alarm or timer is ringing |
+| `USE_FULL_SCREEN_INTENT` | To display the alarm screen over the lock screen |
 
 These permissions are used solely for the App's core functionality and are not used to collect any information.
 
@@ -97,6 +99,8 @@ Tikka Timer는 전적으로 사용자의 기기에서만 작동하며 다음을 
 | `VIBRATE` | 알람 또는 타이머 완료 시 기기 진동 |
 | `RECEIVE_BOOT_COMPLETED` | 기기 재시작 후 예약된 알람 복원 |
 | `FOREGROUND_SERVICE` | 앱이 백그라운드에 있을 때 타이머 계속 실행 |
+| `WAKE_LOCK` | 알람 또는 타이머가 울릴 때 기기를 깨운 상태로 유지 |
+| `USE_FULL_SCREEN_INTENT` | 잠금 화면 위에 알람 화면 표시 |
 
 이러한 권한은 앱의 핵심 기능에만 사용되며 어떠한 정보 수집에도 사용되지 않습니다.
 
