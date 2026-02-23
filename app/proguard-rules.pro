@@ -66,10 +66,16 @@
 }
 
 # ============================================================================
+# DataStore
+# ============================================================================
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-keep class androidx.datastore.** { *; }
+
+# ============================================================================
 # App-specific rules
 # ============================================================================
 # Keep domain models (used for serialization/reflection)
--keep class com.tikkatimer.domain.model.** { *; }
+-keep class com.luigi.tikkatimer.domain.model.** { *; }
 
 # Keep Room entities
--keep class com.tikkatimer.data.local.entity.** { *; }
+-keep class com.luigi.tikkatimer.data.local.entity.** { *; }

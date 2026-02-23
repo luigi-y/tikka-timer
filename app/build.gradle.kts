@@ -20,11 +20,11 @@ ksp {
 }
 
 android {
-    namespace = "com.tikkatimer"
+    namespace = "com.luigi.tikkatimer"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.tikkatimer"
+        applicationId = "com.luigi.tikkatimer"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

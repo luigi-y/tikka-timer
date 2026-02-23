@@ -19,7 +19,7 @@
 - 클래스: PascalCase (예: `AlarmViewModel`)
 - 함수/변수: camelCase (예: `startTimer()`)
 - 상수: SCREAMING_SNAKE_CASE (예: `MAX_ALARM_COUNT`)
-- 패키지: lowercase (예: `com.tikkatimer.presentation.timer`)
+- 패키지: lowercase (예: `com.luigi.tikkatimer.presentation.timer`)
 
 ### 아키텍처 레이어
 ```

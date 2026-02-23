@@ -265,7 +265,7 @@ naming:
     excludeClassPattern: '$^'
   InvalidPackageDeclaration:
     active: true
-    rootPackage: 'com.tikkatimer'
+    rootPackage: 'com.luigi.tikkatimer'
     requireRootInDeclaration: false
   LambdaParameterNaming:
     active: true

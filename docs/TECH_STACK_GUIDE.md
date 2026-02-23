@@ -320,7 +320,7 @@ class AlarmScheduler @Inject constructor(
     fun scheduleAlarm(alarm: AlarmEntity) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("ALARM_ID", alarm.id)
-            action = "com.tikkatimer.ALARM_TRIGGER"
+            action = "com.luigi.tikkatimer.ALARM_TRIGGER"
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -484,11 +484,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tikkatimer"
+    namespace = "com.luigi.tikkatimer"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.tikkatimer"
+        applicationId = "com.luigi.tikkatimer"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
