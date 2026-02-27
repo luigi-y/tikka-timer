@@ -85,8 +85,8 @@ private fun SmallWidgetContent(
             contentAlignment = Alignment.Center,
         ) {
             when {
-                state.isRunning -> SmallRunningContent()
-                state.isPaused -> SmallPausedContent()
+                state.isRunning -> SmallRunningContent(colorTheme)
+                state.isPaused -> SmallPausedContent(colorTheme)
                 else -> SmallIdleContent(colorTheme)
             }
         }
@@ -96,24 +96,26 @@ private fun SmallWidgetContent(
 }
 
 @Composable
-private fun SmallRunningContent() {
+private fun SmallRunningContent(colorTheme: ColorTheme) {
     // 1x1 위젯은 아이콘만 표시 (앱 아이콘 크기에 맞춤)
+    // 앱 설정의 테마 색상으로 아이콘 tint 적용
     Image(
-        provider = ImageProvider(R.drawable.ic_timer_running),
+        provider = ImageProvider(R.drawable.ic_hourglass),
         contentDescription = null,
         modifier = GlanceModifier.size(40.dp),
-        colorFilter = ColorFilter.tint(WidgetColors.runningAccent),
+        colorFilter = ColorFilter.tint(WidgetColors.getIdlePalette(colorTheme).accent),
     )
 }
 
 @Composable
-private fun SmallPausedContent() {
+private fun SmallPausedContent(colorTheme: ColorTheme) {
     // 1x1 위젯은 아이콘만 표시 (앱 아이콘 크기에 맞춤)
+    // 앱 설정의 테마 색상으로 아이콘 tint 적용
     Image(
         provider = ImageProvider(R.drawable.ic_timer_paused),
         contentDescription = null,
         modifier = GlanceModifier.size(40.dp),
-        colorFilter = ColorFilter.tint(WidgetColors.pausedAccent),
+        colorFilter = ColorFilter.tint(WidgetColors.getIdlePalette(colorTheme).accent),
     )
 }
 

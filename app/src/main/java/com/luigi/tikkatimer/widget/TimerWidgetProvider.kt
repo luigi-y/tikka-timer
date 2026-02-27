@@ -59,12 +59,10 @@ class TimerWidgetProvider : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, layoutId)
 
-            // idle 상태에서 테마 색상 적용 (아이콘 tint)
-            if (!state.isFinished && !state.isRunning && !state.isPaused) {
-                val colorTheme = WidgetColors.readColorThemeSync(context)
-                val tintColor = WidgetColors.getIdleAccentArgb(colorTheme)
-                views.setInt(R.id.widget_icon, "setColorFilter", tintColor)
-            }
+            // 모든 상태에서 앱 설정의 테마 색상을 아이콘에 적용
+            val colorTheme = WidgetColors.readColorThemeSync(context)
+            val tintColor = WidgetColors.getIdleAccentArgb(colorTheme)
+            views.setInt(R.id.widget_icon, "setColorFilter", tintColor)
 
             // 실행 중: Chronometer로 카운트다운 (시스템이 자동 업데이트)
             if (state.isRunning && state.targetEndTimeMillis > 0) {
