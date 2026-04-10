@@ -273,7 +273,7 @@ private fun TimerMainScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             FilledTonalButton(onClick = onAddClick) {
-                                Icon(Icons.Default.Add, contentDescription = null)
+                                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.timer_add))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(stringResource(R.string.timer_add))
                             }
@@ -639,7 +639,11 @@ private fun AddTimerScreen(
                     enabled = canStart,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(R.string.timer_preset_save),
+                        modifier = Modifier.size(18.dp),
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.timer_preset_save))
                 }
@@ -650,7 +654,7 @@ private fun AddTimerScreen(
                     enabled = canStart,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Icon(Icons.Default.PlayArrow, contentDescription = stringResource(R.string.timer_start))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.timer_start))
                 }
@@ -789,7 +793,7 @@ private fun EditTimerScreen(
                     enabled = canSave,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Icon(Icons.Default.PlayArrow, contentDescription = stringResource(R.string.timer_start))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.timer_start))
                 }

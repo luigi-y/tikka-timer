@@ -167,6 +167,7 @@
     <string name="stopwatch_foreground_title">Stopwatch Running</string>
     <string name="timer_remaining">Remaining: %s</string>
     <string name="notification_timer_cancel">Cancel</string>
+    <string name="timer_finished_notification">Timer finished!</string>
     <string name="stopwatch_elapsed">Elapsed: %s</string>
 
     <!-- Privacy Policy -->

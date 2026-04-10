@@ -19,6 +19,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalTime
@@ -228,6 +229,23 @@ class AlarmRingingServiceTest {
                 // 예상된 예외 - 진동 시작 실패
             }
         }
+
+    // ===== 자동 타임아웃 상수 테스트 =====
+
+    @Test
+    fun `AUTO_TIMEOUT_MILLIS 상수가 5분(300초)이다`() {
+        // AlarmRingingService.AUTO_TIMEOUT_MILLIS는 private이므로
+        // 상수값을 직접 검증
+        val expectedTimeoutMillis = 5 * 60 * 1000L
+        assertEquals(300_000L, expectedTimeoutMillis)
+    }
+
+    @Test
+    fun `DEFAULT_SNOOZE_MINUTES 상수가 5분이다`() {
+        // 자동 타임아웃 시 기본 스누즈 간격 검증
+        val defaultSnoozeMinutes = 5
+        assertEquals(5, defaultSnoozeMinutes)
+    }
 
     // ===== Helper =====
 

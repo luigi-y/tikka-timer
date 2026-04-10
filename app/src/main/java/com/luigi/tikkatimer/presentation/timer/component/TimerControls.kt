@@ -124,7 +124,7 @@ fun TimerControls(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.timer_add_minute),
                             modifier = Modifier.size(16.dp),
                         )
                         Text(
@@ -178,7 +178,7 @@ fun TimerControls(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.timer_add_minute),
                             modifier = Modifier.size(16.dp),
                         )
                         Text(

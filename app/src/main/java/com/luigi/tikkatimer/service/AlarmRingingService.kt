@@ -4,7 +4,9 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import com.luigi.tikkatimer.domain.model.SoundType
 import com.luigi.tikkatimer.domain.model.VibrationPattern
@@ -35,6 +37,7 @@ class AlarmRingingService : Service() {
     @Inject lateinit var alarmScheduler: AlarmScheduler
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val autoTimeoutHandler = Handler(Looper.getMainLooper())
     private var currentAlarmId: Long = -1
 
     companion object {
@@ -58,6 +61,9 @@ class AlarmRingingService : Service() {
         const val EXTRA_SNOOZE_DURATION = "extra_snooze_duration"
 
         private const val DEFAULT_SNOOZE_MINUTES = 5
+
+        /** 알람이 무응답일 때 자동 스누즈까지 대기 시간 (5분) */
+        private const val AUTO_TIMEOUT_MILLIS = 5 * 60 * 1000L
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -100,6 +106,7 @@ class AlarmRingingService : Service() {
         val label = intent.getStringExtra(EXTRA_LABEL) ?: ""
         val timeText = intent.getStringExtra(EXTRA_TIME_TEXT) ?: ""
         val isOneTime = intent.getBooleanExtra(EXTRA_IS_ONE_TIME, false)
+        val snoozeDuration = intent.getIntExtra(EXTRA_SNOOZE_DURATION, DEFAULT_SNOOZE_MINUTES)
 
         val soundType = SoundType.fromName(soundTypeName)
         val vibrationPattern = VibrationPattern.fromName(vibrationPatternName)
@@ -148,6 +155,36 @@ class AlarmRingingService : Service() {
                 }
             }
         }
+
+        // 5분 후 자동 스누즈 (사용자 무응답 시)
+        scheduleAutoTimeout(alarmId, snoozeDuration)
+    }
+
+    /**
+     * 자동 타임아웃 스케줄링
+     * 사용자가 알람을 해제/스누즈하지 않으면 자동으로 스누즈 처리
+     */
+    private fun scheduleAutoTimeout(
+        alarmId: Long,
+        snoozeDuration: Int,
+    ) {
+        autoTimeoutHandler.removeCallbacksAndMessages(null)
+        autoTimeoutHandler.postDelayed(
+            {
+                Log.d(
+                    TAG,
+                    "Auto-timeout: alarm $alarmId not responded, auto-snoozing",
+                )
+                val snoozeIntent =
+                    Intent(this, AlarmRingingService::class.java).apply {
+                        action = ACTION_SNOOZE
+                        putExtra(EXTRA_ALARM_ID, alarmId)
+                        putExtra(EXTRA_SNOOZE_DURATION, snoozeDuration)
+                    }
+                startService(snoozeIntent)
+            },
+            AUTO_TIMEOUT_MILLIS,
+        )
     }
 
     /**
@@ -156,6 +193,9 @@ class AlarmRingingService : Service() {
     private fun handleDismiss(intent: Intent) {
         val alarmId = intent.getLongExtra(EXTRA_ALARM_ID, currentAlarmId)
         Log.d(TAG, "Dismissing alarm $alarmId")
+
+        // 자동 타임아웃 취소
+        autoTimeoutHandler.removeCallbacksAndMessages(null)
 
         // 소리/진동 중지
         alarmSoundManager.stopAll()
@@ -194,6 +234,9 @@ class AlarmRingingService : Service() {
         val snoozeDuration = intent.getIntExtra(EXTRA_SNOOZE_DURATION, DEFAULT_SNOOZE_MINUTES)
         Log.d(TAG, "Snoozing alarm $alarmId for $snoozeDuration minutes")
 
+        // 자동 타임아웃 취소
+        autoTimeoutHandler.removeCallbacksAndMessages(null)
+
         // 소리/진동 중지
         alarmSoundManager.stopAll()
 
@@ -228,6 +271,7 @@ class AlarmRingingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        autoTimeoutHandler.removeCallbacksAndMessages(null)
         alarmSoundManager.stopAll()
         serviceScope.cancel()
         Log.d(TAG, "Service destroyed")

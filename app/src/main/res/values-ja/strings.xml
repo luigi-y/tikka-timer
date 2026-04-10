@@ -167,6 +167,7 @@
     <string name="stopwatch_foreground_title">ストップウォッチ実行中</string>
     <string name="timer_remaining">残り時間: %s</string>
     <string name="notification_timer_cancel">キャンセル</string>
+    <string name="timer_finished_notification">タイマーが終了しました！</string>
     <string name="stopwatch_elapsed">経過時間: %s</string>
 
     <!-- Privacy Policy -->

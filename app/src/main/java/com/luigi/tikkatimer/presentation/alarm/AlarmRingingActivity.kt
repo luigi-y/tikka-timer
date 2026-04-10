@@ -266,7 +266,7 @@ private fun AlarmRingingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Snooze,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.alarm_snooze),
                         modifier = Modifier.size(24.dp),
                     )
                     Spacer(modifier = Modifier.size(8.dp))
@@ -288,7 +288,7 @@ private fun AlarmRingingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.alarm_dismiss),
                         modifier = Modifier.size(24.dp),
                     )
                     Spacer(modifier = Modifier.size(8.dp))

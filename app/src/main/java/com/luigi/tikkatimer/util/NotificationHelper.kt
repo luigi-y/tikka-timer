@@ -324,6 +324,44 @@ class NotificationHelper
         }
 
         /**
+         * 타이머 완료 알림 생성
+         * TIMER_CHANNEL_ID 사용 (높은 중요도) - 사운드/진동은 채널 설정에 따름
+         */
+        fun buildTimerFinishedNotification(timerName: String): NotificationCompat.Builder {
+            val timerIntent =
+                Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    putExtra(MainActivity.EXTRA_NAVIGATE_TO_TIMER, true)
+                }
+
+            val pendingIntent =
+                PendingIntent.getActivity(
+                    context,
+                    TIMER_NOTIFICATION_ID,
+                    timerIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+
+            val title =
+                if (timerName.isNotEmpty()) {
+                    timerName
+                } else {
+                    context.getString(R.string.timer_foreground_title)
+                }
+
+            return NotificationCompat.Builder(context, TIMER_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_timer)
+                .setContentTitle(title)
+                .setContentText(context.getString(R.string.timer_finished_notification))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+        }
+
+        /**
          * 알림 표시
          */
         fun showNotification(

@@ -167,6 +167,7 @@
     <string name="stopwatch_foreground_title">秒表运行中</string>
     <string name="timer_remaining">剩余时间: %s</string>
     <string name="notification_timer_cancel">取消</string>
+    <string name="timer_finished_notification">计时器已完成！</string>
     <string name="stopwatch_elapsed">已用时间: %s</string>
 
     <!-- Privacy Policy -->

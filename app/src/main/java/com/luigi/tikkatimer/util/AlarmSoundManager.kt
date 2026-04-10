@@ -198,6 +198,9 @@ class AlarmSoundManager
          */
         private fun tryPlayDefaultAlarm() {
             try {
+                // 기존 MediaPlayer 리소스 정리 (누수 방지)
+                stopAlarmSound()
+
                 val uri =
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                         ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

@@ -16,7 +16,9 @@ import com.luigi.tikkatimer.widget.TimerWidgetStateManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -60,8 +62,14 @@ class TimerStateSync
         /** 이전 틱에서 완료되지 않았던 타이머 ID 목록 (중복 알림 방지) */
         private val notifiedFinishedTimers = mutableSetOf<String>()
 
+        /** 타이머 완료 소리 자동 정지 Job */
+        private var finishedSoundStopJob: Job? = null
+
         companion object {
             private const val TAG = "TimerStateSync"
+
+            /** 타이머 완료 소리 자동 정지까지 대기 시간 (30초) */
+            private const val FINISHED_SOUND_TIMEOUT_MILLIS = 30_000L
         }
 
         /**
@@ -157,8 +165,14 @@ class TimerStateSync
                 // 진동 재생
                 alarmSoundManager.startVibration(timer.vibrationPattern)
 
+                // 타이머 완료 알림 발송
+                showTimerFinishedNotification(timer)
+
                 // 알림 완료 표시
                 notifiedFinishedTimers.add(timer.instanceId)
+
+                // 30초 후 소리/진동 자동 정지 (알림은 유지)
+                scheduleFinishedSoundStop(timer.instanceId)
             }
 
             // 완료 상태가 아닌 타이머는 알림 목록에서 제거 (재시작 시 다시 알림)
@@ -172,8 +186,39 @@ class TimerStateSync
          */
         fun stopFinishedAlarm(instanceId: String) {
             Log.d(TAG, "Stopping alarm for timer: $instanceId")
+            finishedSoundStopJob?.cancel()
+            finishedSoundStopJob = null
             alarmSoundManager.stopAll()
             notifiedFinishedTimers.remove(instanceId)
+        }
+
+        /**
+         * 타이머 완료 알림 발송
+         */
+        private fun showTimerFinishedNotification(timer: SyncedTimerState) {
+            try {
+                val notification = notificationHelper.buildTimerFinishedNotification(timer.name)
+                notificationHelper.showNotification(
+                    NotificationHelper.TIMER_NOTIFICATION_ID,
+                    notification,
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to show timer finished notification", e)
+            }
+        }
+
+        /**
+         * 타이머 완료 소리 자동 정지 스케줄링
+         * 30초 후 소리/진동만 정지 (알림은 유지)
+         */
+        private fun scheduleFinishedSoundStop(instanceId: String) {
+            finishedSoundStopJob?.cancel()
+            finishedSoundStopJob =
+                scope.launch {
+                    delay(FINISHED_SOUND_TIMEOUT_MILLIS)
+                    Log.d(TAG, "Auto-stopping finished timer sound for: $instanceId")
+                    alarmSoundManager.stopAll()
+                }
         }
 
         /**
@@ -336,13 +381,20 @@ class TimerStateSync
 
         /**
          * Foreground Service 관리
+         * RUNNING 또는 PAUSED 상태의 타이머가 있으면 서비스 유지
          */
         private fun manageForegroundService(timers: List<SyncedTimerState>) {
-            val hasRunningTimer = timers.any { it.state == TimerState.RUNNING }
+            val hasActiveTimer =
+                timers.any {
+                    it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+                }
 
-            if (hasRunningTimer && !isServiceRunning) {
-                startForegroundService(timers.first { it.state == TimerState.RUNNING })
-            } else if (!hasRunningTimer && isServiceRunning) {
+            if (hasActiveTimer && !isServiceRunning) {
+                val serviceTimer =
+                    timers.firstOrNull { it.state == TimerState.RUNNING }
+                        ?: timers.first { it.state == TimerState.PAUSED }
+                startForegroundService(serviceTimer)
+            } else if (!hasActiveTimer && isServiceRunning) {
                 stopForegroundService()
             }
         }

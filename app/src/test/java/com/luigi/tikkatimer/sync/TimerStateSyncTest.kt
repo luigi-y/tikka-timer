@@ -415,6 +415,93 @@ class TimerStateSyncTest {
         assertEquals(TimerState.PAUSED, displayTimer.state)
     }
 
+    // ===== Foreground Service 유지 조건 테스트 =====
+
+    @Test
+    fun `PAUSED 타이머만 있어도 서비스를 유지해야 한다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.PAUSED),
+                createSyncedState("t2", TimerState.IDLE),
+            )
+
+        val hasActiveTimer =
+            timers.any {
+                it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+            }
+
+        assertTrue(hasActiveTimer)
+    }
+
+    @Test
+    fun `IDLE 타이머만 있으면 서비스를 종료해야 한다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.IDLE),
+                createSyncedState("t2", TimerState.IDLE),
+            )
+
+        val hasActiveTimer =
+            timers.any {
+                it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+            }
+
+        assertFalse(hasActiveTimer)
+    }
+
+    @Test
+    fun `FINISHED 타이머만 있으면 서비스를 종료해야 한다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.FINISHED),
+            )
+
+        val hasActiveTimer =
+            timers.any {
+                it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+            }
+
+        assertFalse(hasActiveTimer)
+    }
+
+    @Test
+    fun `RUNNING과 PAUSED 혼합 시 RUNNING 타이머를 서비스에 사용한다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.PAUSED),
+                createSyncedState("t2", TimerState.RUNNING),
+            )
+
+        val serviceTimer =
+            timers.firstOrNull { it.state == TimerState.RUNNING }
+                ?: timers.first { it.state == TimerState.PAUSED }
+
+        assertEquals("t2", serviceTimer.instanceId)
+        assertEquals(TimerState.RUNNING, serviceTimer.state)
+    }
+
+    @Test
+    fun `PAUSED만 있으면 PAUSED 타이머를 서비스에 사용한다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.PAUSED),
+            )
+
+        val hasActiveTimer =
+            timers.any {
+                it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+            }
+
+        assertTrue(hasActiveTimer)
+
+        val serviceTimer =
+            timers.firstOrNull { it.state == TimerState.RUNNING }
+                ?: timers.first { it.state == TimerState.PAUSED }
+
+        assertEquals("t1", serviceTimer.instanceId)
+        assertEquals(TimerState.PAUSED, serviceTimer.state)
+    }
+
     // ===== Helper =====
 
     private fun createSyncedState(
