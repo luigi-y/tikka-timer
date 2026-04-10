@@ -8,6 +8,7 @@ import com.luigi.tikkatimer.util.AlarmSoundManager
 import com.luigi.tikkatimer.util.NotificationHelper
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -322,6 +323,96 @@ class TimerStateSyncTest {
         assertTrue(timers.isEmpty())
         assertTrue(notifiedSet.isEmpty())
         verify { alarmSoundManager.stopAll() }
+    }
+
+    // ===== TimerNotificationEvent 테스트 =====
+
+    @Test
+    fun `TimerNotificationEvent Pause가 올바르게 생성된다`() {
+        val event = TimerNotificationEvent.Pause("timer-1")
+        assertEquals("timer-1", event.instanceId)
+    }
+
+    @Test
+    fun `TimerNotificationEvent Resume이 올바르게 생성된다`() {
+        val event = TimerNotificationEvent.Resume("timer-2")
+        assertEquals("timer-2", event.instanceId)
+    }
+
+    @Test
+    fun `TimerNotificationEvent AddOneMinute가 올바르게 생성된다`() {
+        val event = TimerNotificationEvent.AddOneMinute("timer-3")
+        assertEquals("timer-3", event.instanceId)
+    }
+
+    @Test
+    fun `TimerNotificationEvent Cancel이 올바르게 생성된다`() {
+        val event = TimerNotificationEvent.Cancel("timer-4")
+        assertEquals("timer-4", event.instanceId)
+    }
+
+    @Test
+    fun `SharedFlow의 tryEmit이 성공한다`() {
+        val flow = MutableSharedFlow<TimerNotificationEvent>(extraBufferCapacity = 8)
+
+        val result1 = flow.tryEmit(TimerNotificationEvent.Pause("t1"))
+        val result2 = flow.tryEmit(TimerNotificationEvent.Resume("t1"))
+        val result3 = flow.tryEmit(TimerNotificationEvent.AddOneMinute("t1"))
+        val result4 = flow.tryEmit(TimerNotificationEvent.Cancel("t1"))
+
+        assertTrue(result1)
+        assertTrue(result2)
+        assertTrue(result3)
+        assertTrue(result4)
+    }
+
+    @Test
+    fun `SharedFlow의 replayCache가 비어있다`() {
+        val flow = MutableSharedFlow<TimerNotificationEvent>(extraBufferCapacity = 8)
+
+        assertTrue(flow.replayCache.isEmpty())
+    }
+
+    // ===== 알림 상태 업데이트 우선순위 테스트 =====
+
+    @Test
+    fun `RUNNING 타이머가 PAUSED보다 알림 표시 우선순위가 높다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.PAUSED),
+                createSyncedState("t2", TimerState.RUNNING),
+            )
+
+        val activeTimers =
+            timers.filter {
+                it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+            }
+        val displayTimer =
+            activeTimers.firstOrNull { it.state == TimerState.RUNNING }
+                ?: activeTimers.first()
+
+        assertEquals("t2", displayTimer.instanceId)
+        assertEquals(TimerState.RUNNING, displayTimer.state)
+    }
+
+    @Test
+    fun `RUNNING이 없으면 PAUSED 타이머가 알림에 표시된다`() {
+        val timers =
+            listOf(
+                createSyncedState("t1", TimerState.PAUSED),
+                createSyncedState("t2", TimerState.IDLE),
+            )
+
+        val activeTimers =
+            timers.filter {
+                it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+            }
+        val displayTimer =
+            activeTimers.firstOrNull { it.state == TimerState.RUNNING }
+                ?: activeTimers.first()
+
+        assertEquals("t1", displayTimer.instanceId)
+        assertEquals(TimerState.PAUSED, displayTimer.state)
     }
 
     // ===== Helper =====

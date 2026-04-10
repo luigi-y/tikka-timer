@@ -14,6 +14,7 @@ import com.luigi.tikkatimer.domain.model.VibrationPattern
 import com.luigi.tikkatimer.domain.usecase.timer.DeleteTimerPresetUseCase
 import com.luigi.tikkatimer.domain.usecase.timer.GetTimerPresetsUseCase
 import com.luigi.tikkatimer.domain.usecase.timer.SaveTimerPresetUseCase
+import com.luigi.tikkatimer.sync.TimerNotificationEvent
 import com.luigi.tikkatimer.sync.TimerStateSync
 import com.luigi.tikkatimer.widget.TimerWidgetUpdater
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,6 +58,7 @@ class TimerViewModel
         init {
             loadPresets()
             restoreTimersFromDb()
+            collectNotificationEvents()
         }
 
         /**
@@ -159,6 +161,23 @@ class TimerViewModel
                     runningTimerDao.delete(instanceId)
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to delete timer from DB", e)
+                }
+            }
+        }
+
+        /**
+         * 알림 액션 이벤트 수집
+         * Service → TimerStateSync → ViewModel 역방향 통신
+         */
+        private fun collectNotificationEvents() {
+            viewModelScope.launch {
+                timerStateSync.notificationEvents.collect { event ->
+                    when (event) {
+                        is TimerNotificationEvent.Pause -> pauseTimer(event.instanceId)
+                        is TimerNotificationEvent.Resume -> resumeTimer(event.instanceId)
+                        is TimerNotificationEvent.AddOneMinute -> addOneMinute(event.instanceId)
+                        is TimerNotificationEvent.Cancel -> removeTimer(event.instanceId)
+                    }
                 }
             }
         }

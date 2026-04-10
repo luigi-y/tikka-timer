@@ -166,6 +166,7 @@
     <string name="timer_foreground_title">Timer Running</string>
     <string name="stopwatch_foreground_title">Stopwatch Running</string>
     <string name="timer_remaining">Remaining: %s</string>
+    <string name="notification_timer_cancel">Cancel</string>
     <string name="stopwatch_elapsed">Elapsed: %s</string>
 
     <!-- Privacy Policy -->

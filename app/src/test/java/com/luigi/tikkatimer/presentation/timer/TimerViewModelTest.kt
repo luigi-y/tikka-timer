@@ -7,12 +7,14 @@ import com.luigi.tikkatimer.domain.model.TimerState
 import com.luigi.tikkatimer.domain.usecase.timer.DeleteTimerPresetUseCase
 import com.luigi.tikkatimer.domain.usecase.timer.GetTimerPresetsUseCase
 import com.luigi.tikkatimer.domain.usecase.timer.SaveTimerPresetUseCase
+import com.luigi.tikkatimer.sync.TimerNotificationEvent
 import com.luigi.tikkatimer.sync.TimerStateSync
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -43,7 +45,10 @@ class TimerViewModelTest {
         Dispatchers.setMain(testDispatcher)
 
         mockContext = mockk(relaxed = true)
-        timerStateSync = mockk(relaxed = true)
+        timerStateSync =
+            mockk(relaxed = true) {
+                every { notificationEvents } returns MutableSharedFlow<TimerNotificationEvent>()
+            }
         runningTimerDao = mockk(relaxed = true)
 
         getTimerPresetsUseCase =

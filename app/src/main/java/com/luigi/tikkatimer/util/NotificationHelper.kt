@@ -11,9 +11,11 @@ import com.luigi.tikkatimer.MainActivity
 import com.luigi.tikkatimer.R
 import com.luigi.tikkatimer.presentation.alarm.AlarmRingingActivity
 import com.luigi.tikkatimer.service.AlarmRingingService
+import com.luigi.tikkatimer.service.TimerForegroundService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.media.app.NotificationCompat as MediaNotificationCompat
 
 /**
  * 알림 관련 유틸리티
@@ -179,11 +181,13 @@ class NotificationHelper
 
         /**
          * 타이머/스톱워치 Foreground Service 알림 생성
-         * 클릭 시 타이머 탭으로 이동
+         * 클릭 시 타이머 탭으로 이동, 타이머 실행 중이면 액션 버튼 표시
          */
         fun buildForegroundNotification(
             title: String,
             content: String,
+            timerId: String? = null,
+            isTimerRunning: Boolean = false,
         ): NotificationCompat.Builder {
             // 타이머 탭으로 이동하는 Intent
             val timerIntent =
@@ -202,14 +206,121 @@ class NotificationHelper
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
 
-            return NotificationCompat.Builder(context, FOREGROUND_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_timer)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .setOngoing(true)
-                .setContentIntent(pendingIntent)
+            val builder =
+                NotificationCompat.Builder(context, FOREGROUND_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_hourglass)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                    .setOngoing(true)
+                    .setContentIntent(pendingIntent)
+
+            // 타이머 ID가 있으면 액션 버튼 추가
+            if (timerId != null) {
+                addTimerNotificationActions(builder, timerId, isTimerRunning)
+            }
+
+            return builder
+        }
+
+        /**
+         * 타이머 알림 액션 버튼 추가 (MediaStyle 적용)
+         * 접힌 상태: Pause/Resume, Cancel 아이콘이 오른쪽에 표시
+         * 펼친 상태: +1분 버튼 추가 표시
+         *
+         * 액션 순서: [0] Pause/Resume, [1] Cancel, [2] +1분
+         * compact view: [0, 1] → 접힌 상태에서 Pause/Resume + Cancel 표시
+         */
+        private fun addTimerNotificationActions(
+            builder: NotificationCompat.Builder,
+            timerId: String,
+            isTimerRunning: Boolean,
+        ) {
+            val baseRequestCode = FOREGROUND_NOTIFICATION_ID
+
+            // [0] Pause/Resume 토글
+            if (isTimerRunning) {
+                val pauseIntent =
+                    Intent(context, TimerForegroundService::class.java).apply {
+                        action = TimerForegroundService.ACTION_PAUSE_TIMER
+                        putExtra(TimerForegroundService.EXTRA_TIMER_ID, timerId)
+                    }
+                val pausePendingIntent =
+                    PendingIntent.getService(
+                        context,
+                        baseRequestCode + 1,
+                        pauseIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                    )
+                builder.addAction(
+                    R.drawable.ic_timer_paused,
+                    context.getString(R.string.timer_pause),
+                    pausePendingIntent,
+                )
+            } else {
+                val resumeIntent =
+                    Intent(context, TimerForegroundService::class.java).apply {
+                        action = TimerForegroundService.ACTION_RESUME_TIMER
+                        putExtra(TimerForegroundService.EXTRA_TIMER_ID, timerId)
+                    }
+                val resumePendingIntent =
+                    PendingIntent.getService(
+                        context,
+                        baseRequestCode + 1,
+                        resumeIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                    )
+                builder.addAction(
+                    R.drawable.ic_timer_running,
+                    context.getString(R.string.timer_resume),
+                    resumePendingIntent,
+                )
+            }
+
+            // [1] 취소 버튼
+            val cancelIntent =
+                Intent(context, TimerForegroundService::class.java).apply {
+                    action = TimerForegroundService.ACTION_CANCEL_TIMER
+                    putExtra(TimerForegroundService.EXTRA_TIMER_ID, timerId)
+                }
+            val cancelPendingIntent =
+                PendingIntent.getService(
+                    context,
+                    baseRequestCode + 3,
+                    cancelIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            builder.addAction(
+                R.drawable.ic_close,
+                context.getString(R.string.notification_timer_cancel),
+                cancelPendingIntent,
+            )
+
+            // [2] +1분 버튼 (펼친 상태에서만 표시)
+            val addMinuteIntent =
+                Intent(context, TimerForegroundService::class.java).apply {
+                    action = TimerForegroundService.ACTION_ADD_MINUTE
+                    putExtra(TimerForegroundService.EXTRA_TIMER_ID, timerId)
+                }
+            val addMinutePendingIntent =
+                PendingIntent.getService(
+                    context,
+                    baseRequestCode + 2,
+                    addMinuteIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                )
+            builder.addAction(
+                0,
+                context.getString(R.string.timer_add_minute),
+                addMinutePendingIntent,
+            )
+
+            // MediaStyle 적용: 접힌 상태에서 [0] Pause/Resume, [1] Cancel을 오른쪽 아이콘으로 표시
+            builder.setStyle(
+                MediaNotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(0, 1),
+            )
         }
 
         /**

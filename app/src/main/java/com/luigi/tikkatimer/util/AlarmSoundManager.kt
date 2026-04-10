@@ -131,7 +131,13 @@ class AlarmSoundManager
 
                 // minSdk=26 (Android O)이므로 VibrationEffect 사용 가능
                 val effect = VibrationEffect.createWaveform(vibrationPattern, 0)
-                vibrator.vibrate(effect)
+                val audioAttributes =
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build()
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(effect, audioAttributes)
 
                 Log.d(TAG, "Vibration started successfully")
             } catch (e: SecurityException) {

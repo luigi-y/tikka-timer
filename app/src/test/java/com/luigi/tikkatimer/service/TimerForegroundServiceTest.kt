@@ -229,6 +229,58 @@ class TimerForegroundServiceTest {
         assertTrue(!shouldStop)
     }
 
+    // ===== 알림 액션 상수 테스트 =====
+
+    @Test
+    fun `ACTION_PAUSE_TIMER 상수가 올바른 값을 가진다`() {
+        assertEquals(
+            "com.luigi.tikkatimer.ACTION_PAUSE_TIMER",
+            TimerForegroundService.ACTION_PAUSE_TIMER,
+        )
+    }
+
+    @Test
+    fun `ACTION_RESUME_TIMER 상수가 올바른 값을 가진다`() {
+        assertEquals(
+            "com.luigi.tikkatimer.ACTION_RESUME_TIMER",
+            TimerForegroundService.ACTION_RESUME_TIMER,
+        )
+    }
+
+    @Test
+    fun `ACTION_ADD_MINUTE 상수가 올바른 값을 가진다`() {
+        assertEquals(
+            "com.luigi.tikkatimer.ACTION_ADD_MINUTE",
+            TimerForegroundService.ACTION_ADD_MINUTE,
+        )
+    }
+
+    @Test
+    fun `ACTION_CANCEL_TIMER 상수가 올바른 값을 가진다`() {
+        assertEquals(
+            "com.luigi.tikkatimer.ACTION_CANCEL_TIMER",
+            TimerForegroundService.ACTION_CANCEL_TIMER,
+        )
+    }
+
+    @Test
+    fun `모든 알림 액션 상수가 고유한 값을 가진다`() {
+        val actions =
+            setOf(
+                TimerForegroundService.ACTION_START_TIMER,
+                TimerForegroundService.ACTION_STOP_TIMER,
+                TimerForegroundService.ACTION_UPDATE_TIMER,
+                TimerForegroundService.ACTION_PAUSE_TIMER,
+                TimerForegroundService.ACTION_RESUME_TIMER,
+                TimerForegroundService.ACTION_ADD_MINUTE,
+                TimerForegroundService.ACTION_CANCEL_TIMER,
+                TimerForegroundService.ACTION_START_STOPWATCH,
+                TimerForegroundService.ACTION_STOP_STOPWATCH,
+            )
+
+        assertEquals(9, actions.size)
+    }
+
     // ===== Helper =====
 
     /**

@@ -234,6 +234,9 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
 
+    // Media (MediaStyle notification)
+    implementation(libs.androidx.media)
+
     // Glance (Widget)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)

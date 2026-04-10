@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import com.luigi.tikkatimer.R
+import com.luigi.tikkatimer.sync.TimerNotificationEvent
+import com.luigi.tikkatimer.sync.TimerStateSync
 import com.luigi.tikkatimer.util.NotificationHelper
 import com.luigi.tikkatimer.widget.TimerWidgetUpdater
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +32,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TimerForegroundService : Service() {
     @Inject lateinit var notificationHelper: NotificationHelper
+
+    @Inject lateinit var timerStateSync: TimerStateSync
 
     private val binder = LocalBinder()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -54,6 +58,10 @@ class TimerForegroundService : Service() {
         const val ACTION_START_STOPWATCH = "com.luigi.tikkatimer.ACTION_START_STOPWATCH"
         const val ACTION_STOP_STOPWATCH = "com.luigi.tikkatimer.ACTION_STOP_STOPWATCH"
         const val ACTION_UPDATE_TIMER = "com.luigi.tikkatimer.ACTION_UPDATE_TIMER"
+        const val ACTION_PAUSE_TIMER = "com.luigi.tikkatimer.ACTION_PAUSE_TIMER"
+        const val ACTION_RESUME_TIMER = "com.luigi.tikkatimer.ACTION_RESUME_TIMER"
+        const val ACTION_ADD_MINUTE = "com.luigi.tikkatimer.ACTION_ADD_MINUTE"
+        const val ACTION_CANCEL_TIMER = "com.luigi.tikkatimer.ACTION_CANCEL_TIMER"
 
         const val EXTRA_TIMER_ID = "extra_timer_id"
         const val EXTRA_TIMER_NAME = "extra_timer_name"
@@ -88,6 +96,22 @@ class TimerForegroundService : Service() {
             ACTION_UPDATE_TIMER -> handleUpdateTimer(intent)
             ACTION_START_STOPWATCH -> handleStartStopwatch(intent)
             ACTION_STOP_STOPWATCH -> handleStopStopwatch()
+            ACTION_PAUSE_TIMER ->
+                handleNotificationAction(intent) { id ->
+                    TimerNotificationEvent.Pause(id)
+                }
+            ACTION_RESUME_TIMER ->
+                handleNotificationAction(intent) { id ->
+                    TimerNotificationEvent.Resume(id)
+                }
+            ACTION_ADD_MINUTE ->
+                handleNotificationAction(intent) { id ->
+                    TimerNotificationEvent.AddOneMinute(id)
+                }
+            ACTION_CANCEL_TIMER ->
+                handleNotificationAction(intent) { id ->
+                    TimerNotificationEvent.Cancel(id)
+                }
         }
 
         return START_STICKY
@@ -211,6 +235,18 @@ class TimerForegroundService : Service() {
     }
 
     /**
+     * 알림 액션 버튼 클릭 → TimerStateSync 이벤트 발행
+     */
+    private fun handleNotificationAction(
+        intent: Intent,
+        eventFactory: (String) -> TimerNotificationEvent,
+    ) {
+        val timerId = intent.getStringExtra(EXTRA_TIMER_ID) ?: return
+        Log.d(TAG, "Notification action for timer $timerId: ${intent.action}")
+        timerStateSync.emitNotificationEvent(eventFactory(timerId))
+    }
+
+    /**
      * Foreground Service 시작 (필요한 경우)
      */
     private fun startForegroundIfNeeded() {
@@ -321,6 +357,8 @@ class TimerForegroundService : Service() {
      * 알림 빌드
      */
     private fun buildNotification(): androidx.core.app.NotificationCompat.Builder {
+        val firstTimer = _timerStates.value.firstOrNull()
+
         val (title, content) =
             when {
                 isTimerRunning && isStopwatchRunning -> {
@@ -331,7 +369,6 @@ class TimerForegroundService : Service() {
                     getString(R.string.timer_foreground_title) to content
                 }
                 isTimerRunning -> {
-                    val firstTimer = _timerStates.value.firstOrNull()
                     val timerText = firstTimer?.let { formatTime(it.remainingMillis) } ?: ""
                     getString(R.string.timer_foreground_title) to
                         getString(R.string.timer_remaining, timerText)
@@ -346,7 +383,12 @@ class TimerForegroundService : Service() {
                 }
             }
 
-        return notificationHelper.buildForegroundNotification(title, content)
+        return notificationHelper.buildForegroundNotification(
+            title = title,
+            content = content,
+            timerId = firstTimer?.id,
+            isTimerRunning = isTimerRunning,
+        )
     }
 
     /**

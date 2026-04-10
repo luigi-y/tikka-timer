@@ -17,8 +17,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,6 +49,10 @@ class TimerStateSync
         /** 현재 동기화된 타이머 상태 */
         private val _currentTimers = MutableStateFlow<List<SyncedTimerState>>(emptyList())
         val currentTimers: StateFlow<List<SyncedTimerState>> = _currentTimers.asStateFlow()
+
+        /** 알림 → ViewModel 역방향 통신용 이벤트 채널 */
+        private val _notificationEvents = MutableSharedFlow<TimerNotificationEvent>(extraBufferCapacity = 8)
+        val notificationEvents: SharedFlow<TimerNotificationEvent> = _notificationEvents.asSharedFlow()
 
         /** 서비스 실행 여부 */
         private var isServiceRunning = false
@@ -197,6 +204,14 @@ class TimerStateSync
         }
 
         /**
+         * 알림 액션 이벤트 발행
+         * Service에서 알림 버튼 클릭 시 호출 → ViewModel에서 수집
+         */
+        fun emitNotificationEvent(event: TimerNotificationEvent) {
+            _notificationEvents.tryEmit(event)
+        }
+
+        /**
          * 모든 타이머 중지 및 정리
          */
         fun clearAll() {
@@ -279,23 +294,37 @@ class TimerStateSync
 
         /**
          * 알림 상태 업데이트
+         * RUNNING 또는 PAUSED 상태의 타이머가 있으면 알림 유지
          */
         private fun updateNotificationState(timers: List<SyncedTimerState>) {
-            val runningTimers = timers.filter { it.state == TimerState.RUNNING }
+            val activeTimers =
+                timers.filter {
+                    it.state == TimerState.RUNNING || it.state == TimerState.PAUSED
+                }
 
-            if (runningTimers.isEmpty()) {
-                // 실행 중인 타이머가 없으면 알림 제거는 서비스에서 처리
+            if (activeTimers.isEmpty()) {
+                // 활성 타이머가 없으면 알림 제거는 서비스에서 처리
                 return
             }
 
-            // 실행 중인 첫 번째 타이머로 알림 업데이트
-            val firstTimer = runningTimers.first()
-            val timeText = formatTime(firstTimer.remainingMillis)
+            // 우선순위: RUNNING > PAUSED
+            val displayTimer =
+                activeTimers.firstOrNull { it.state == TimerState.RUNNING }
+                    ?: activeTimers.first()
+            val isRunning = displayTimer.state == TimerState.RUNNING
+
+            val timeText = formatTime(displayTimer.remainingMillis)
             val title = context.getString(com.luigi.tikkatimer.R.string.timer_foreground_title)
             val content = context.getString(com.luigi.tikkatimer.R.string.timer_remaining, timeText)
 
             try {
-                val notification = notificationHelper.buildForegroundNotification(title, content)
+                val notification =
+                    notificationHelper.buildForegroundNotification(
+                        title = title,
+                        content = content,
+                        timerId = displayTimer.instanceId,
+                        isTimerRunning = isRunning,
+                    )
                 notificationHelper.showNotification(
                     NotificationHelper.FOREGROUND_NOTIFICATION_ID,
                     notification,
@@ -374,6 +403,19 @@ class TimerStateSync
             }
         }
     }
+
+/**
+ * 알림 액션 → ViewModel 역방향 통신 이벤트
+ */
+sealed class TimerNotificationEvent {
+    data class Pause(val instanceId: String) : TimerNotificationEvent()
+
+    data class Resume(val instanceId: String) : TimerNotificationEvent()
+
+    data class AddOneMinute(val instanceId: String) : TimerNotificationEvent()
+
+    data class Cancel(val instanceId: String) : TimerNotificationEvent()
+}
 
 /**
  * 동기화용 타이머 상태

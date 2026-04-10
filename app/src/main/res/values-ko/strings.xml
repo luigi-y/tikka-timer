@@ -166,6 +166,7 @@
     <string name="timer_foreground_title">타이머 실행 중</string>
     <string name="stopwatch_foreground_title">스톱워치 실행 중</string>
     <string name="timer_remaining">남은 시간: %s</string>
+    <string name="notification_timer_cancel">취소</string>
     <string name="stopwatch_elapsed">경과 시간: %s</string>
 
     <!-- Privacy Policy -->
